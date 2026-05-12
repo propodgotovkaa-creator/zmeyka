@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Змейка: собери картинки</title>
+
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #dff6ff;
+}
+
+#FX_ROOT {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.7), transparent 18%),
+    linear-gradient(135deg, #b8f3d4, #bde7ff);
+  user-select: none;
+  cursor: default;
+}
+
+#gameArea {
+  position: absolute;
+  inset: 20px;
+  border: 6px solid rgba(255,255,255,.9);
+  border-radius: 28px;
+  background: rgba(255,255,255,.35);
+  box-shadow: inset 0 0 30px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+#score {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  z-index: 20;
+  font-size: 26px;
+  font-weight: 800;
+  color: #24566b;
+  background: rgba(255,255,255,.8);
+  padding: 8px 18px;
+  border-radius: 20px;
+}
+
+#startScreen, #endScreen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.75);
+  text-align: center;
+}
+
+.panel {
+  background: white;
+  border-radius: 28px;
+  padding: 34px 42px;
+  box-shadow: 0 14px 40px rgba(0,0,0,.18);
+  max-width: 480px;
+}
+
+.panel h1 {
+  margin: 0 0 16px;
+  font-size: 38px;
+  color: #28566c;
+}
+
+.panel p {
+  font-size: 20px;
+  color: #48616d;
+}
+
+button {
+  border: none;
+  border-radius: 22px;
+  padding: 16px 32px;
+  font-size: 24px;
+  font-weight: 800;
+  background: #ffce58;
+  color: #5a3b00;
+  cursor: pointer;
+  box-shadow: 0 8px 0 #d49b20;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: 0 4px 0 #d49b20;
+}
+
+.snake-part {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #5ec96f;
+  box-shadow: inset -5px -5px 0 rgba(0,0,0,.12);
+  transform: translate(-50%, -50%);
+}
+
+.snake-head {
+  background: #39b85a;
+  z-index: 10;
+}
+
+.snake-head::before,
+.snake-head::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background: #123;
+  border-radius: 50%;
+}
+
+.snake-head::before { left: 9px; }
+.snake-head::after { right: 9px; }
+
+.collect-item {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bomb {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bomb.safe {
+  animation: blink .18s infinite alternate;
+  opacity: .45;
+}
+
+@keyframes blink {
+  from { opacity: .25; transform: translate(-50%, -50%) scale(.9); }
+  to { opacity: .85; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+.pop {
+  position: absolute;
+  font-size: 34px;
+  pointer-events: none;
+  animation: pop .6s ease-out forwards;
+  z-index: 30;
+}
+
+@keyframes pop {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
+  to { opacity: 0; transform: translate(-50%, -95%) scale(1.4); }
+}
+
+#crosshair {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #28566c;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  display: none;
+  transform: translate(-50%, -50%);
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: #28566c;
+}
+
+#crosshair::before {
+  width: 34px;
+  height: 3px;
+  top: 11px;
+  left: -7px;
+}
+
+#crosshair::after {
+  width: 3px;
+  height: 34px;
+  left: 11px;
+  top: -7px;
+}
+</style>
+</head>
+
+<body>
+<div id="FX_ROOT">
+
+  <div id="gameArea"></div>
+
+  <div id="score">0 / 10</div>
+  <div id="crosshair"></div>
+
+  <div id="startScreen">
+    <div class="panel">
+      <h1>Змейка</h1>
+      <p>Собери 10 картинок и не попади в бомбочки.</p>
+      <button id="startBtn">Начать игру</button>
+    </div>
+  </div>
+
+  <div id="endScreen" style="display:none;">
+    <div class="panel">
+      <h1 id="endTitle">Победа!</h1>
+      <p id="endText">Ты собрал все картинки!</p>
+      <button id="restartBtn">Играть снова</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const root = document.getElementById("FX_ROOT");
+  const area = document.getElementById("gameArea");
+  const scoreEl = document.getElementById("score");
+  const startScreen = document.getElementById("startScreen");
+  const endScreen = document.getElementById("endScreen");
+  const startBtn = document.getElementById("startBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const endTitle = document.getElementById("endTitle");
+  const endText = document.getElementById("endText");
+  const crosshair = document.getElementById("crosshair");
+
+  const SETTINGS = {
+    targetCount: 10,
+    snakeSpeed: 2.8,
+    segmentDistance: 18,
+    startLength: 7,
+    growBy: 3,
+    itemEmoji: "🍎",
+    bombEmoji: "💣",
+    bombCount: 4,
+    bombLifeMs: 10000,
+    bombSafeMs: 1000,
+    bombRespawnDelayMs: 700,
+    wallPadding: 22
+  };
+
+  let playing = false;
+  let finished = false;
+  let collected = 0;
+
+  let mouse = { x: 300, y: 300 };
+  let snake = [];
+  let item = null;
+  let bombs = [];
+  let animationId = null;
+  let bombTimer = null;
+
+  function areaRect() {
+    return area.getBoundingClientRect();
+  }
+
+  function rand(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function clearGame() {
+    area.querySelectorAll(".snake-part, .collect-item, .bomb, .pop").forEach(el => el.remove());
+    bombs = [];
+    snake = [];
+    item = null;
+    if (animationId) cancelAnimationFrame(animationId);
+    if (bombTimer) clearTimeout(bombTimer);
+  }
+
+  function startGame() {
+    clearGame();
+
+    playing = true;
+    finished = false;
+    collected = 0;
+    scoreEl.textContent = "0 / " + SETTINGS.targetCount;
+
+    startScreen.style.display = "none";
+    endScreen.style.display = "none";
+    crosshair.style.display = "block";
+    root.style.cursor = "none";
+
+    const rect = areaRect();
+    const startX = rect.width / 2;
+    const startY = rect.height / 2;
+
+    mouse.x = startX;
+    mouse.y = startY;
+
+    for (let i = 0; i < SETTINGS.startLength; i++) {
+      const part = document.createElement("div");
+      part.className = "snake-part" + (i === 0 ? " snake-head" : "");
+      area.appendChild(part);
+
+      snake.push({
+        x: startX - i * SETTINGS.segmentDistance,
+        y: startY,
+        el: part
+      });
+    }
+
+    spawnItem();
+    spawnBombsCycle();
+    loop();
+  }
+
+  function endGame(win) {
+    playing = false;
+    finished = true;
+
+    if (animationId) cancelAnimationFrame(animationId);
+    if (bombTimer) clearTimeout(bombTimer);
+
+    crosshair.style.display = "none";
+    root.style.cursor = "default";
+
+    endScreen.style.display = "flex";
+
+    if (win) {
+      endTitle.textContent = "Победа!";
+      endText.textContent = "Ты собрал все картинки!";
+    } else {
+      endTitle.textContent = "Попробуй ещё раз!";
+      endText.textContent = "Змейка столкнулась с бомбочкой или краем поля.";
+    }
+  }
+
+  function placeElement(el, x, y) {
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+  }
+
+  function distance(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function safeRandomPoint(margin = 70) {
+    const rect = areaRect();
+    return {
+      x: rand(margin, rect.width - margin),
+      y: rand(margin, rect.height - margin)
+    };
+  }
+
+  function spawnItem() {
+    if (item && item.el) item.el.remove();
+
+    let pos;
+    let tries = 0;
+
+    do {
+      pos = safeRandomPoint(80);
+      tries++;
+    } while (
+      snake[0] &&
+      distance(pos, snake[0]) < 130 &&
+      tries < 40
+    );
+
+    const el = document.createElement("div");
+    el.className = "collect-item";
+    el.textContent = SETTINGS.itemEmoji;
+    area.appendChild(el);
+
+    item = { x: pos.x, y: pos.y, el };
+    placeElement(el, pos.x, pos.y);
+  }
+
+  function collectItem() {
+    collected++;
+    scoreEl.textContent = collected + " / " + SETTINGS.targetCount;
+
+    makePop(item.x, item.y, "✨");
+
+    if (item && item.el) item.el.remove();
+    item = null;
+
+    growSnake();
+
+    if (collected >= SETTINGS.targetCount) {
+      endGame(true);
+      return;
+    }
+
+    spawnItem();
+  }
+
+  function growSnake() {
+    const tail = snake[snake.length - 1];
+
+    for (let i = 0; i < SETTINGS.growBy; i++) {
+      const part = document.createElement("div");
+      part.className = "snake-part";
+      area.appendChild(part);
+
+      snake.push({
+        x: tail.x,
+        y: tail.y,
+        el: part
+      });
+    }
+
+    const newSize = Math.min(54, 34 + collected * 2);
+
+    snake.forEach(part => {
+      part.el.style.width = newSize + "px";
+      part.el.style.height = newSize + "px";
+    });
+  }
+
+  function spawnBombsCycle() {
+    bombs.forEach(b => b.el.remove());
+    bombs = [];
+
+    for (let i = 0; i < SETTINGS.bombCount; i++) {
+      spawnBomb();
+    }
+
+    bombTimer = setTimeout(() => {
+      bombs.forEach(b => b.el.remove());
+      bombs = [];
+
+      bombTimer = setTimeout(() => {
+        if (playing) spawnBombsCycle();
+      }, SETTINGS.bombRespawnDelayMs);
+
+    }, SETTINGS.bombLifeMs);
+  }
+
+  function spawnBomb() {
+    let pos;
+    let tries = 0;
+
+    do {
+      pos = safeRandomPoint(80);
+      tries++;
+    } while (
+      snake[0] &&
+      distance(pos, snake[0]) < 130 &&
+      tries < 50
+    );
+
+    const el = document.createElement("div");
+    el.className = "bomb safe";
+    el.textContent = SETTINGS.bombEmoji;
+    area.appendChild(el);
+    placeElement(el, pos.x, pos.y);
+
+    const bomb = {
+      x: pos.x,
+      y: pos.y,
+      el,
+      safe: true
+    };
+
+    bombs.push(bomb);
+
+    setTimeout(() => {
+      if (!playing || !bomb.el) return;
+      bomb.safe = false;
+      bomb.el.classList.remove("safe");
+    }, SETTINGS.bombSafeMs);
+  }
+
+  function makePop(x, y, text) {
+    const el = document.createElement("div");
+    el.className = "pop";
+    el.textContent = text;
+    area.appendChild(el);
+    placeElement(el, x, y);
+
+    setTimeout(() => el.remove(), 650);
+  }
+
+  function updateSnake() {
+    const head = snake[0];
+
+    const dx = mouse.x - head.x;
+    const dy = mouse.y - head.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+    head.x += (dx / len) * SETTINGS.snakeSpeed;
+    head.y += (dy / len) * SETTINGS.snakeSpeed;
+
+    for (let i = 1; i < snake.length; i++) {
+      const prev = snake[i - 1];
+      const cur = snake[i];
+
+      const dx2 = prev.x - cur.x;
+      const dy2 = prev.y - cur.y;
+      const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
+
+      if (d > SETTINGS.segmentDistance) {
+        cur.x += (dx2 / d) * (d - SETTINGS.segmentDistance);
+        cur.y += (dy2 / d) * (d - SETTINGS.segmentDistance);
+      }
+    }
+
+    snake.forEach(part => {
+      placeElement(part.el, part.x, part.y);
+    });
+  }
+
+  function checkCollisions() {
+    const rect = areaRect();
+    const head = snake[0];
+    const pad = SETTINGS.wallPadding;
+
+    if (
+      head.x < pad ||
+      head.y < pad ||
+      head.x > rect.width - pad ||
+      head.y > rect.height - pad
+    ) {
+      endGame(false);
+      return;
+    }
+
+    if (item && distance(head, item) < 42) {
+      collectItem();
+      return;
+    }
+
+    for (const bomb of bombs) {
+      if (!bomb.safe && distance(head, bomb) < 42) {
+        makePop(head.x, head.y, "💥");
+        endGame(false);
+        return;
+      }
+    }
+  }
+
+  function loop() {
+    if (!playing) return;
+
+    updateSnake();
+    checkCollisions();
+
+    animationId = requestAnimationFrame(loop);
+  }
+
+  function movePointer(clientX, clientY) {
+    const rect = areaRect();
+
+    mouse.x = clientX - rect.left;
+    mouse.y = clientY - rect.top;
+
+    crosshair.style.left = clientX + "px";
+    crosshair.style.top = clientY + "px";
+  }
+
+  root.addEventListener("mousemove", e => {
+    if (!playing) return;
+    movePointer(e.clientX, e.clientY);
+  });
+
+  root.addEventListener("touchmove", e => {
+    if (!playing) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    movePointer(t.clientX, t.clientY);
+  }, { passive: false });
+
+  startBtn.addEventListener("click", startGame);
+  restartBtn.addEventListener("click", startGame);
+
+})();
+</script>
+
+</body>
+</html>
