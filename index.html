@@ -35,11 +35,8 @@ html, body {
   opacity: .22;
   background-image:
     linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
-    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
-    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
     linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55));
   background-size: 80px 140px;
-  background-position: 0 0, 0 0, 40px 70px, 40px 70px;
   pointer-events: none;
 }
 
@@ -117,7 +114,7 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
-/* КРАСИВАЯ 3D-ЗМЕЙКА */
+/* ТЕЛО ЗМЕЙКИ */
 
 .snake-part {
   position: absolute;
@@ -146,42 +143,99 @@ button:active {
   filter: blur(1px);
 }
 
+/* ГОЛОВА С МИЛОЙ МОРДОЧКОЙ */
+
 .snake-head {
-  width: 50px !important;
-  height: 50px !important;
-  z-index: 12;
+  width: 56px !important;
+  height: 56px !important;
+  z-index: 14;
+  border-radius: 50%;
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 19%),
-    radial-gradient(circle at 34% 30%, #ff6cff 0 15%, #c538f4 45%, #851ad1 78%, #5b0c9c 100%);
+    radial-gradient(circle at 34% 30%, #ff75ff 0 15%, #c73cf4 45%, #851ad1 78%, #5b0c9c 100%);
   box-shadow:
     inset -8px -9px 0 rgba(52,0,96,.23),
     inset 5px 5px 0 rgba(255,255,255,.25),
     0 9px 16px rgba(72,0,120,.38);
 }
 
-.snake-head::before,
-.snake-head::after {
-  content: "";
+.snake-face {
+  position: absolute;
+  inset: 0;
+  transform: rotate(0deg);
+}
+
+.eye {
   position: absolute;
   top: 10px;
-  width: 17px;
-  height: 17px;
-  background:
-    radial-gradient(circle at 62% 58%, #1d2440 0 22%, transparent 24%),
-    radial-gradient(circle at 35% 30%, #ffffff 0 13%, transparent 15%),
-    #fff47a;
-  border: 3px solid rgba(65,32,92,.35);
+  width: 18px;
+  height: 22px;
+  background: #fff47a;
   border-radius: 50%;
+  border: 3px solid rgba(65,32,92,.35);
   box-shadow: 0 2px 4px rgba(0,0,0,.25);
 }
 
-.snake-head::before {
-  left: 4px;
+.eye.left {
+  left: 7px;
 }
 
-.snake-head::after {
-  right: 4px;
+.eye.right {
+  right: 7px;
 }
+
+.eye::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  left: 6px;
+  top: 8px;
+  background: #1d2440;
+  border-radius: 50%;
+  box-shadow: -2px -2px 0 rgba(255,255,255,.85);
+}
+
+.cheek {
+  position: absolute;
+  top: 34px;
+  width: 9px;
+  height: 6px;
+  background: rgba(255,160,220,.75);
+  border-radius: 50%;
+}
+
+.cheek.left {
+  left: 11px;
+}
+
+.cheek.right {
+  right: 11px;
+}
+
+.smile {
+  position: absolute;
+  left: 50%;
+  top: 32px;
+  width: 16px;
+  height: 9px;
+  border-bottom: 3px solid rgba(55,20,75,.7);
+  border-radius: 0 0 20px 20px;
+  transform: translateX(-50%);
+}
+
+.tongue {
+  position: absolute;
+  left: 50%;
+  top: 42px;
+  width: 5px;
+  height: 10px;
+  background: #ff5b9f;
+  border-radius: 0 0 6px 6px;
+  transform: translateX(-50%);
+}
+
+/* ПРЕДМЕТЫ */
 
 .collect-item {
   position: absolute;
@@ -239,37 +293,7 @@ button:active {
 }
 
 #crosshair {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  border: 3px solid #28566c;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 100;
   display: none;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 3px 4px rgba(255,255,255,.8));
-}
-
-#crosshair::before,
-#crosshair::after {
-  content: "";
-  position: absolute;
-  background: #28566c;
-}
-
-#crosshair::before {
-  width: 38px;
-  height: 3px;
-  top: 13px;
-  left: -7px;
-}
-
-#crosshair::after {
-  width: 3px;
-  height: 38px;
-  left: 13px;
-  top: -7px;
 }
 </style>
 </head>
@@ -311,7 +335,6 @@ button:active {
   const restartBtn = document.getElementById("restartBtn");
   const endTitle = document.getElementById("endTitle");
   const endText = document.getElementById("endText");
-  const crosshair = document.getElementById("crosshair");
 
   const SETTINGS = {
     targetCount: 10,
@@ -325,13 +348,11 @@ button:active {
     bombLifeMs: 10000,
     bombSafeMs: 1000,
     bombRespawnDelayMs: 700,
-    wallPadding: 24
+    wallPadding: 26
   };
 
   let playing = false;
-  let finished = false;
   let collected = 0;
-
   let mouse = { x: 300, y: 300 };
   let snake = [];
   let item = null;
@@ -356,30 +377,47 @@ button:active {
     if (bombTimer) clearTimeout(bombTimer);
   }
 
+  function createSnakePart(isHead) {
+    const part = document.createElement("div");
+    part.className = "snake-part" + (isHead ? " snake-head" : "");
+
+    if (isHead) {
+      part.innerHTML = `
+        <div class="snake-face">
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+          <div class="cheek left"></div>
+          <div class="cheek right"></div>
+          <div class="smile"></div>
+          <div class="tongue"></div>
+        </div>
+      `;
+    }
+
+    area.appendChild(part);
+    return part;
+  }
+
   function startGame() {
     clearGame();
 
     playing = true;
-    finished = false;
     collected = 0;
     scoreEl.textContent = "0 / " + SETTINGS.targetCount;
 
     startScreen.style.display = "none";
     endScreen.style.display = "none";
-    crosshair.style.display = "block";
     root.style.cursor = "none";
 
     const rect = areaRect();
     const startX = rect.width / 2;
     const startY = rect.height / 2;
 
-    mouse.x = startX;
+    mouse.x = startX + 160;
     mouse.y = startY;
 
     for (let i = 0; i < SETTINGS.startLength; i++) {
-      const part = document.createElement("div");
-      part.className = "snake-part" + (i === 0 ? " snake-head" : "");
-      area.appendChild(part);
+      const part = createSnakePart(i === 0);
 
       snake.push({
         x: startX - i * SETTINGS.segmentDistance,
@@ -395,14 +433,11 @@ button:active {
 
   function endGame(win) {
     playing = false;
-    finished = true;
 
     if (animationId) cancelAnimationFrame(animationId);
     if (bombTimer) clearTimeout(bombTimer);
 
-    crosshair.style.display = "none";
     root.style.cursor = "default";
-
     endScreen.style.display = "flex";
 
     if (win) {
@@ -425,7 +460,7 @@ button:active {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  function safeRandomPoint(margin = 80) {
+  function safeRandomPoint(margin = 90) {
     const rect = areaRect();
     return {
       x: rand(margin, rect.width - margin),
@@ -442,11 +477,7 @@ button:active {
     do {
       pos = safeRandomPoint(90);
       tries++;
-    } while (
-      snake[0] &&
-      distance(pos, snake[0]) < 140 &&
-      tries < 40
-    );
+    } while (snake[0] && distance(pos, snake[0]) < 150 && tries < 40);
 
     const el = document.createElement("div");
     el.className = "collect-item";
@@ -480,9 +511,7 @@ button:active {
     const tail = snake[snake.length - 1];
 
     for (let i = 0; i < SETTINGS.growBy; i++) {
-      const part = document.createElement("div");
-      part.className = "snake-part";
-      area.appendChild(part);
+      const part = createSnakePart(false);
 
       snake.push({
         x: tail.x,
@@ -526,11 +555,7 @@ button:active {
     do {
       pos = safeRandomPoint(90);
       tries++;
-    } while (
-      snake[0] &&
-      distance(pos, snake[0]) < 140 &&
-      tries < 50
-    );
+    } while (snake[0] && distance(pos, snake[0]) < 150 && tries < 50);
 
     const el = document.createElement("div");
     el.className = "bomb safe";
@@ -613,13 +638,13 @@ button:active {
       return;
     }
 
-    if (item && distance(head, item) < 44) {
+    if (item && distance(head, item) < 46) {
       collectItem();
       return;
     }
 
     for (const bomb of bombs) {
-      if (!bomb.safe && distance(head, bomb) < 44) {
+      if (!bomb.safe && distance(head, bomb) < 46) {
         makePop(head.x, head.y, "💥");
         endGame(false);
         return;
@@ -638,12 +663,8 @@ button:active {
 
   function movePointer(clientX, clientY) {
     const rect = areaRect();
-
     mouse.x = clientX - rect.left;
     mouse.y = clientY - rect.top;
-
-    crosshair.style.left = clientX + "px";
-    crosshair.style.top = clientY + "px";
   }
 
   root.addEventListener("mousemove", e => {
