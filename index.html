@@ -34,8 +34,8 @@ html, body {
   inset: 0;
   opacity: .22;
   background-image:
-    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
-    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55));
+    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%),
+    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%);
   background-size: 80px 140px;
   pointer-events: none;
 }
@@ -57,14 +57,13 @@ html, body {
   position: absolute;
   top: 18px;
   left: 22px;
-  z-index: 20;
+  z-index: 30;
   font-size: 26px;
   font-weight: 900;
   color: #24566b;
   background: rgba(255,255,255,.86);
   padding: 8px 18px;
   border-radius: 20px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
 
 #startScreen, #endScreen {
@@ -114,7 +113,43 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
-/* ТЕЛО ЗМЕЙКИ */
+/* КУРСОР ИГРЫ */
+
+#crosshair {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(40,86,108,.85);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 7;
+  display: none;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 3px rgba(255,255,255,.8));
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: rgba(40,86,108,.85);
+}
+
+#crosshair::before {
+  width: 38px;
+  height: 3px;
+  top: 12px;
+  left: -8px;
+}
+
+#crosshair::after {
+  width: 3px;
+  height: 38px;
+  left: 12px;
+  top: -8px;
+}
+
+/* ТЕЛО */
 
 .snake-part {
   position: absolute;
@@ -122,6 +157,7 @@ button:active {
   height: 38px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  z-index: 10;
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 18%),
     radial-gradient(circle at 34% 30%, #e46aff 0 18%, #b832f0 46%, #7a19c8 78%, #4f0d91 100%);
@@ -143,16 +179,16 @@ button:active {
   filter: blur(1px);
 }
 
-/* ГОЛОВА С МИЛОЙ МОРДОЧКОЙ */
+/* МИЛАЯ ГОЛОВА */
 
 .snake-head {
-  width: 56px !important;
-  height: 56px !important;
-  z-index: 14;
-  border-radius: 50%;
+  width: 58px !important;
+  height: 58px !important;
+  z-index: 15;
+  border-radius: 48% 52% 50% 50%;
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 19%),
-    radial-gradient(circle at 34% 30%, #ff75ff 0 15%, #c73cf4 45%, #851ad1 78%, #5b0c9c 100%);
+    radial-gradient(circle at 34% 30%, #ff82ff 0 15%, #c93cf3 45%, #871bd1 78%, #5b0c9c 100%);
   box-shadow:
     inset -8px -9px 0 rgba(52,0,96,.23),
     inset 5px 5px 0 rgba(255,255,255,.25),
@@ -162,64 +198,65 @@ button:active {
 .snake-face {
   position: absolute;
   inset: 0;
-  transform: rotate(0deg);
 }
 
 .eye {
   position: absolute;
-  top: 10px;
-  width: 18px;
-  height: 22px;
-  background: #fff47a;
+  top: 9px;
+  width: 17px;
+  height: 21px;
+  background: #fff7a8;
   border-radius: 50%;
-  border: 3px solid rgba(65,32,92,.35);
-  box-shadow: 0 2px 4px rgba(0,0,0,.25);
+  border: 3px solid rgba(75,35,100,.32);
+  box-shadow: 0 2px 4px rgba(0,0,0,.22);
 }
 
-.eye.left {
-  left: 7px;
-}
-
-.eye.right {
-  right: 7px;
-}
+.eye.left { left: 8px; }
+.eye.right { right: 8px; }
 
 .eye::after {
   content: "";
   position: absolute;
   width: 7px;
-  height: 7px;
-  left: 6px;
+  height: 8px;
+  left: 5px;
   top: 8px;
-  background: #1d2440;
+  background: #24304a;
   border-radius: 50%;
-  box-shadow: -2px -2px 0 rgba(255,255,255,.85);
+  box-shadow: -2px -2px 0 rgba(255,255,255,.9);
+}
+
+.nose {
+  position: absolute;
+  left: 50%;
+  top: 28px;
+  width: 5px;
+  height: 4px;
+  background: rgba(65,25,90,.45);
+  border-radius: 50%;
+  transform: translateX(-50%);
 }
 
 .cheek {
   position: absolute;
-  top: 34px;
-  width: 9px;
-  height: 6px;
-  background: rgba(255,160,220,.75);
+  top: 33px;
+  width: 10px;
+  height: 7px;
+  background: rgba(255,170,220,.7);
   border-radius: 50%;
+  filter: blur(.2px);
 }
 
-.cheek.left {
-  left: 11px;
-}
-
-.cheek.right {
-  right: 11px;
-}
+.cheek.left { left: 9px; }
+.cheek.right { right: 9px; }
 
 .smile {
   position: absolute;
   left: 50%;
   top: 32px;
-  width: 16px;
-  height: 9px;
-  border-bottom: 3px solid rgba(55,20,75,.7);
+  width: 18px;
+  height: 10px;
+  border-bottom: 3px solid rgba(55,20,75,.65);
   border-radius: 0 0 20px 20px;
   transform: translateX(-50%);
 }
@@ -228,10 +265,10 @@ button:active {
   position: absolute;
   left: 50%;
   top: 42px;
-  width: 5px;
-  height: 10px;
-  background: #ff5b9f;
-  border-radius: 0 0 6px 6px;
+  width: 6px;
+  height: 9px;
+  background: #ff6aa8;
+  border-radius: 0 0 7px 7px;
   transform: translateX(-50%);
 }
 
@@ -291,10 +328,6 @@ button:active {
   from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
   to { opacity: 0; transform: translate(-50%, -95%) scale(1.5); }
 }
-
-#crosshair {
-  display: none;
-}
 </style>
 </head>
 
@@ -335,6 +368,7 @@ button:active {
   const restartBtn = document.getElementById("restartBtn");
   const endTitle = document.getElementById("endTitle");
   const endText = document.getElementById("endText");
+  const crosshair = document.getElementById("crosshair");
 
   const SETTINGS = {
     targetCount: 10,
@@ -348,7 +382,7 @@ button:active {
     bombLifeMs: 10000,
     bombSafeMs: 1000,
     bombRespawnDelayMs: 700,
-    wallPadding: 26
+    wallPadding: 28
   };
 
   let playing = false;
@@ -386,6 +420,7 @@ button:active {
         <div class="snake-face">
           <div class="eye left"></div>
           <div class="eye right"></div>
+          <div class="nose"></div>
           <div class="cheek left"></div>
           <div class="cheek right"></div>
           <div class="smile"></div>
@@ -407,6 +442,7 @@ button:active {
 
     startScreen.style.display = "none";
     endScreen.style.display = "none";
+    crosshair.style.display = "block";
     root.style.cursor = "none";
 
     const rect = areaRect();
@@ -418,7 +454,6 @@ button:active {
 
     for (let i = 0; i < SETTINGS.startLength; i++) {
       const part = createSnakePart(i === 0);
-
       snake.push({
         x: startX - i * SETTINGS.segmentDistance,
         y: startY,
@@ -437,6 +472,7 @@ button:active {
     if (animationId) cancelAnimationFrame(animationId);
     if (bombTimer) clearTimeout(bombTimer);
 
+    crosshair.style.display = "none";
     root.style.cursor = "default";
     endScreen.style.display = "flex";
 
@@ -512,7 +548,6 @@ button:active {
 
     for (let i = 0; i < SETTINGS.growBy; i++) {
       const part = createSnakePart(false);
-
       snake.push({
         x: tail.x,
         y: tail.y,
@@ -663,8 +698,12 @@ button:active {
 
   function movePointer(clientX, clientY) {
     const rect = areaRect();
+
     mouse.x = clientX - rect.left;
     mouse.y = clientY - rect.top;
+
+    crosshair.style.left = clientX + "px";
+    crosshair.style.top = clientY + "px";
   }
 
   root.addEventListener("mousemove", e => {
