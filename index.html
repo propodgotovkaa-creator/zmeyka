@@ -217,14 +217,8 @@ button:active {
 }
 
 @keyframes boom {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(.35);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.45);
-  }
+  from { opacity: 1; transform: translate(-50%, -50%) scale(.35); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.45); }
 }
 
 .pop {
@@ -246,7 +240,6 @@ button:active {
 <div id="FX_ROOT">
 
   <div id="gameArea"></div>
-
   <div id="score">0 / 10</div>
   <div id="crosshair"></div>
 
@@ -283,11 +276,11 @@ button:active {
 
   const SETTINGS = {
     targetCount: 10,
-    snakeSpeed: 2.1,
+    snakeSpeed: 3,
     segmentDistance: 24,
     startLength: 8,
     growBy: 1,
-    pointerSmooth: 0.08,
+    pointerSmooth: 0.1,
     bodyFollow: 0.32,
 
     itemEmoji: "🍎",
@@ -594,10 +587,15 @@ button:active {
     head.x += (dx / dist) * step;
     head.y += (dy / dist) * step;
 
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    let angle = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
+
+    if (angle > 55) angle = 55;
+    if (angle < -55) angle = -55;
+
+    const faceSide = dx < 0 ? -1 : 1;
 
     head.el.style.transform =
-      "translate3d(-50%, -50%, 0) rotate(" + angle + "deg)";
+      "translate3d(-50%, -50%, 0) rotate(" + angle + "deg) scaleX(" + faceSide + ")";
 
     for (let i = 1; i < snake.length; i++) {
       const prev = snake[i - 1];
