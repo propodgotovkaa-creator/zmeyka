@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bombBody" cx="34%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#62748f"/>
+      <stop offset="35%" stop-color="#263247"/>
+      <stop offset="72%" stop-color="#111727"/>
+      <stop offset="100%" stop-color="#070a13"/>
+    </radialGradient>
+
+    <radialGradient id="shine" cx="32%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".85"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="fire" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#fff8a8"/>
+      <stop offset="38%" stop-color="#ffb932"/>
+      <stop offset="72%" stop-color="#ff5b19"/>
+      <stop offset="100%" stop-color="#ff1670"/>
+    </radialGradient>
+
+    <filter id="shadow" x="-35%" y="-35%" width="180%" height="190%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#02030a" flood-opacity=".38"/>
+    </filter>
+
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <ellipse cx="263" cy="420" rx="142" ry="34" fill="#02030a" opacity=".2"/>
+
+  <path d="M300 137 C337 78 391 74 414 116 C430 145 416 172 392 184"
+        fill="none" stroke="#332018" stroke-width="30" stroke-linecap="round"/>
+
+  <path d="M300 137 C337 78 391 74 414 116 C430 145 416 172 392 184"
+        fill="none" stroke="#8a5a37" stroke-width="16" stroke-linecap="round" opacity=".88"/>
+
+  <g filter="url(#glow)">
+    <path d="M405 76
+             C430 102 433 132 410 150
+             C390 165 359 154 359 126
+             C359 101 382 94 383 62
+             C392 68 398 71 405 76Z"
+          fill="url(#fire)"/>
+    <path d="M399 101
+             C410 116 408 132 396 139
+             C383 146 368 137 371 122
+             C373 108 388 107 389 91
+             C393 94 396 97 399 101Z"
+          fill="#fff7a3" opacity=".95"/>
+  </g>
+
+  <circle cx="445" cy="95" r="8" fill="#ffe86b" opacity=".9"/>
+  <circle cx="426" cy="55" r="5" fill="#ff8d2b" opacity=".8"/>
+  <circle cx="358" cy="75" r="6" fill="#fff2a6" opacity=".72"/>
+
+  <ellipse cx="287" cy="151" rx="56" ry="42" fill="#111727" filter="url(#shadow)"/>
+  <ellipse cx="287" cy="145" rx="46" ry="31" fill="#3d4a5d"/>
+  <ellipse cx="268" cy="134" rx="20" ry="10" fill="#ffffff" opacity=".23"/>
+
+  <circle cx="246" cy="278" r="150" fill="url(#bombBody)" filter="url(#shadow)"/>
+
+  <ellipse cx="190" cy="188" rx="62" ry="36" fill="url(#shine)" transform="rotate(-23 190 188)" opacity=".88"/>
+  <circle cx="166" cy="246" r="16" fill="#ffffff" opacity=".16"/>
+
+  <path d="M131 323 C175 415 317 437 386 329 C321 392 205 388 131 323Z"
+        fill="#ffffff" opacity=".07"/>
+
+  <circle cx="324" cy="208" r="7" fill="#ffffff" opacity=".16"/>
+  <circle cx="349" cy="251" r="4" fill="#ffffff" opacity=".12"/>
+</svg>
