@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Змейка: собери картинки</title>
+<title>Гусеница: собери картинки</title>
 
 <style>
 html, body {
@@ -114,53 +114,51 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
-/* КУРСОР ИГРЫ */
+/* МЯГКИЙ КРАСИВЫЙ КУРСОР */
 
 #crosshair {
   position: absolute;
-  width: 28px;
-  height: 28px;
-  border: 3px solid rgba(40,86,108,.85);
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,.95);
   border-radius: 50%;
   pointer-events: none;
   z-index: 7;
   display: none;
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 2px 3px rgba(255,255,255,.8));
-}
-
-#crosshair::before,
-#crosshair::after {
-  content: "";
-  position: absolute;
-  background: rgba(40,86,108,.85);
+  background: rgba(255,255,255,.22);
+  box-shadow:
+    0 0 0 5px rgba(255,255,255,.18),
+    0 0 14px rgba(255,255,255,.9),
+    0 0 22px rgba(111,210,255,.75);
 }
 
 #crosshair::before {
-  width: 38px;
-  height: 3px;
-  top: 12px;
-  left: -8px;
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(40,86,108,.75);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(255,255,255,.9);
 }
 
-#crosshair::after {
-  width: 3px;
-  height: 38px;
-  left: 12px;
-  top: -8px;
-}
-
-/* ГОТОВАЯ SVG-ГУСЕНИЦА */
+/* SVG-ГУСЕНИЦА */
 
 .snake-part {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   pointer-events: none;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   z-index: 10;
-  filter: drop-shadow(0 10px 10px rgba(54,0,80,.22));
+  will-change: transform, left, top;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
 }
 
 .snake-head {
@@ -279,10 +277,10 @@ button:active {
 
   const SETTINGS = {
     targetCount: 10,
-    snakeSpeed: 3,
-    segmentDistance: 28,
-    startLength: 9,
-    growBy: 2,
+    snakeSpeed: 2.35,
+    segmentDistance: 22,
+    startLength: 8,
+    growBy: 1,
 
     itemEmoji: "🍎",
     bombEmoji: "💣",
@@ -554,15 +552,14 @@ button:active {
 
     const dx = mouse.x - head.x;
     const dy = mouse.y - head.y;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
 
-    head.x += (dx / len) * SETTINGS.snakeSpeed;
-    head.y += (dy / len) * SETTINGS.snakeSpeed;
+    head.x += dx * 0.045;
+    head.y += dy * 0.045;
 
     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
     head.el.style.transform =
-      "translate(-50%, -50%) rotate(" + angle + "deg)";
+      "translate3d(-50%, -50%, 0) rotate(" + angle + "deg)";
 
     for (let i = 1; i < snake.length; i++) {
       const prev = snake[i - 1];
@@ -572,22 +569,26 @@ button:active {
       const dy2 = prev.y - cur.y;
       const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
 
-      if (d > SETTINGS.segmentDistance) {
-        cur.x += (dx2 / d) * (d - SETTINGS.segmentDistance);
-        cur.y += (dy2 / d) * (d - SETTINGS.segmentDistance);
+      const targetDistance = SETTINGS.segmentDistance;
+
+      if (d > targetDistance) {
+        const move = (d - targetDistance) * 0.42;
+        cur.x += (dx2 / d) * move;
+        cur.y += (dy2 / d) * move;
       }
 
       if (cur.type === "tail") {
         const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
         cur.el.style.transform =
-          "translate(-50%, -50%) rotate(" + tailAngle + "deg)";
+          "translate3d(-50%, -50%, 0) rotate(" + tailAngle + "deg)";
       } else {
-        cur.el.style.transform = "translate(-50%, -50%)";
+        cur.el.style.transform = "translate3d(-50%, -50%, 0)";
       }
     }
 
     snake.forEach(part => {
-      placeElement(part.el, part.x, part.y);
+      part.el.style.left = part.x + "px";
+      part.el.style.top = part.y + "px";
     });
   }
 
