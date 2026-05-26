@@ -12,7 +12,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #7de0c0, #5ab7d4 70%);
+  background: radial-gradient(circle at top, #bda8ff, #6d78dd 70%);
 }
 
 #FX_ROOT {
@@ -41,31 +41,24 @@ html, body {
 
 #score {
   position: absolute;
-  top: 44px;
-  left: 82px;
-
-  width: 170px;
-  height: 74px;
-
+  top: 58px;
+  left: 74px;
+  width: 210px;
+  height: 82px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   z-index: 35;
-
-  font-size: 34px;
+  font-size: 38px;
   font-weight: 900;
   color: white;
-
   background: transparent;
   border: none;
   box-shadow: none;
   padding: 0;
-
   text-shadow:
     0 3px 0 rgba(75,20,130,.75),
-    0 0 6px rgba(255,255,255,.45);
-
+    0 0 7px rgba(255,255,255,.5);
   pointer-events: none;
 }
 
@@ -154,7 +147,6 @@ button:active {
   background-size: contain;
   z-index: 10;
   will-change: transform, left, top;
-  backface-visibility: hidden;
   filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
 }
 
@@ -286,12 +278,10 @@ button:active {
     pointerSmooth: .1,
     bodyFollow: .32,
 
-    bombBaseCount: 4,
-    bombMaxCount: 6,
     bombLifeMs: 10000,
     bombSafeMs: 1000,
     bombRespawnDelayMs: 700,
-    wallPadding: 78,
+    wallPadding: 92,
 
     itemImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png",
 
@@ -330,9 +320,10 @@ button:active {
   }
 
   function currentBombCount(){
-    if (collected >= 7) return SETTINGS.bombMaxCount;
-    if (collected >= 4) return SETTINGS.bombBaseCount + 1;
-    return SETTINGS.bombBaseCount;
+    if (collected >= 8) return 7;
+    if (collected >= 7) return 6;
+    if (collected >= 4) return 5;
+    return 4;
   }
 
   function clearGame(){
@@ -344,7 +335,7 @@ button:active {
     if(bombTimer) clearTimeout(bombTimer);
   }
 
-  function safeRandomPoint(margin = 130){
+  function safeRandomPoint(margin = 135){
     const rect = areaRect();
     return {
       x: rand(margin, rect.width - margin),
@@ -436,13 +427,13 @@ button:active {
     let pos, tries = 0;
 
     do {
-      pos = safeRandomPoint(145);
+      pos = safeRandomPoint(150);
       tries++;
     } while (
       (
         (snake[0] && distance(pos,snake[0]) < 180) ||
-        bombs.some(b => distance(pos,b) < 175)
-      ) && tries < 100
+        bombs.some(b => distance(pos,b) < 180)
+      ) && tries < 120
     );
 
     const el = document.createElement("div");
@@ -529,14 +520,14 @@ button:active {
     let pos, tries = 0;
 
     do {
-      pos = safeRandomPoint(145);
+      pos = safeRandomPoint(150);
       tries++;
     } while (
       (
         (snake[0] && distance(pos,snake[0]) < 200) ||
-        (item && distance(pos,item) < 190) ||
+        (item && distance(pos,item) < 200) ||
         bombs.some(b => distance(pos,b) < 185)
-      ) && tries < 150
+      ) && tries < 180
     );
 
     const el = document.createElement("div");
