@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bodyGrad2" cx="34%" cy="22%" r="78%">
+      <stop offset="0%" stop-color="#ffc0ff"/>
+      <stop offset="24%" stop-color="#f06cff"/>
+      <stop offset="58%" stop-color="#b43bea"/>
+      <stop offset="100%" stop-color="#7218b6"/>
+    </radialGradient>
+
+    <radialGradient id="shine2" cx="38%" cy="26%" r="56%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".92"/>
+      <stop offset="42%" stop-color="#ffffff" stop-opacity=".25"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="softShadow" x="-35%" y="-35%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#47106f" flood-opacity=".32"/>
+    </filter>
+  </defs>
+
+  <!-- ground shadow -->
+  <ellipse cx="256" cy="405" rx="138" ry="32" fill="#40105c" opacity=".17"/>
+
+  <!-- main bead -->
+  <circle cx="256" cy="240" r="150" fill="url(#bodyGrad2)" filter="url(#softShadow)"/>
+
+  <!-- lower soft shade -->
+  <path d="M135 295 C180 390 322 405 382 305 C322 365 200 358 135 295Z" fill="#4e0d8c" opacity=".16"/>
+
+  <!-- glossy highlight -->
+  <ellipse cx="221" cy="143" rx="62" ry="34" fill="url(#shine2)" transform="rotate(-18 221 143)" opacity=".88"/>
+  <circle cx="180" cy="190" r="14" fill="#ffffff" opacity=".22"/>
+
+  <!-- different pink spots -->
+  <ellipse cx="178" cy="308" rx="27" ry="39" fill="#ff65d7" opacity=".58" transform="rotate(12 178 308)"/>
+  <ellipse cx="356" cy="244" rx="29" ry="37" fill="#ff5ccd" opacity=".66" transform="rotate(-20 356 244)"/>
+  <circle cx="276" cy="337" r="15" fill="#ff7ee0" opacity=".34"/>
+  <circle cx="145" cy="218" r="11" fill="#ff8ae6" opacity=".27"/>
+
+  <!-- tiny decorative sparkles -->
+  <circle cx="348" cy="162" r="5" fill="#ffffff" opacity=".25"/>
+  <circle cx="384" cy="198" r="4" fill="#ffffff" opacity=".2"/>
+</svg>
