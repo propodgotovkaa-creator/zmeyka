@@ -1,726 +1,552 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Гусеница: собери картинки</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Редактор игры Гусеница</title>
 <style>
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #bda8ff, #6d78dd 70%);
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3efff;
+  color:#332a55;
 }
-
-#FX_ROOT {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  user-select: none;
-  cursor: default;
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px;
 }
-
-#gameArea {
-  position: absolute;
-  inset: 24px;
-  border-radius: 34px;
-  overflow: hidden;
-
-  background-image:
-    url("https://github.com/propodgotovkaa-creator/zmeyka/blob/main/assets/assets:game-background.png?raw=true");
-
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.28),
-    inset 0 0 25px rgba(255,255,255,.10);
-
-  border: 8px solid rgba(255,255,255,.12);
+h1{
+  margin:0 0 16px;
+  font-size:34px;
 }
-
-#score {
-  position: absolute;
-  top: 70px;
-  left: 112px;
-
-  width: 150px;
-  height: 65px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  z-index: 35;
-
-  font-size: 32px;
-  font-weight: 900;
-  color: white;
-
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-
-  text-shadow:
-    0 3px 0 rgba(75,20,130,.75),
-    0 0 6px rgba(255,255,255,.45);
-
-  pointer-events: none;
+.card{
+  background:white;
+  border-radius:24px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:0 10px 28px rgba(60,40,120,.14);
 }
-
-#startScreen, #endScreen {
-  position: absolute;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,.72);
-  text-align: center;
+label{
+  display:block;
+  font-weight:700;
+  margin:12px 0 6px;
 }
-
-.panel {
-  background: white;
-  border-radius: 30px;
-  padding: 34px 42px;
-  box-shadow: 0 16px 45px rgba(0,0,0,.22);
-  max-width: 500px;
+input, textarea{
+  width:100%;
+  box-sizing:border-box;
+  border:2px solid #ddd5ff;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:16px;
 }
-
-.panel h1 {
-  margin: 0 0 16px;
-  font-size: 42px;
-  color: #28566c;
+textarea{
+  min-height:120px;
+  resize:vertical;
 }
-
-.panel p {
-  font-size: 21px;
-  color: #48616d;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
 }
-
-button {
-  border: none;
-  border-radius: 22px;
-  padding: 16px 34px;
-  font-size: 24px;
-  font-weight: 900;
-  background: linear-gradient(#ffe27a, #ffbd38);
-  color: #5a3b00;
-  cursor: pointer;
-  box-shadow: 0 8px 0 #d49b20, 0 12px 18px rgba(0,0,0,.18);
+button{
+  border:0;
+  border-radius:18px;
+  padding:14px 24px;
+  font-size:18px;
+  font-weight:900;
+  cursor:pointer;
+  background:linear-gradient(#ffe27a,#ffbd38);
+  color:#5a3b00;
+  box-shadow:0 6px 0 #d49b20;
 }
-
-button:active {
-  transform: translateY(4px);
-  box-shadow: 0 4px 0 #d49b20;
+button:active{
+  transform:translateY(3px);
+  box-shadow:0 3px 0 #d49b20;
 }
-
-#crosshair {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,.95);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 7;
-  display: none;
-  transform: translate(-50%, -50%);
-  background: rgba(255,255,255,.22);
-  box-shadow:
-    0 0 0 5px rgba(255,255,255,.18),
-    0 0 14px rgba(255,255,255,.9),
-    0 0 22px rgba(111,210,255,.75);
+.preview{
+  width:100%;
+  height:520px;
+  border:0;
+  border-radius:22px;
+  background:white;
 }
-
-#crosshair::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  background: rgba(40,86,108,.75);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.snake-part {
-  position: absolute;
-  transform: translate3d(-50%, -50%, 0);
-  pointer-events: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  z-index: 10;
-  will-change: transform, left, top;
-  filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
-}
-
-.snake-head {
-  width: 86px;
-  height: 86px;
-  z-index: 20;
-}
-
-.snake-body {
-  width: 70px;
-  height: 70px;
-}
-
-.snake-tail {
-  width: 62px;
-  height: 62px;
-}
-
-.collect-item {
-  position: absolute;
-  width: 92px;
-  height: 92px;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,.25));
-  animation: floatItem 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes floatItem {
-  from { transform: translate(-50%, -50%) scale(.94); }
-  to { transform: translate(-50%, -58%) scale(1.06); }
-}
-
-.bomb {
-  position: absolute;
-  width: 72px;
-  height: 72px;
-  transform: translate(-50%, -50%);
-  z-index: 9;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,.35));
-  animation: bombFloat 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes bombFloat {
-  from { transform: translate(-50%, -50%) scale(.96) rotate(-2deg); }
-  to { transform: translate(-50%, -56%) scale(1.04) rotate(2deg); }
-}
-
-.bomb.safe {
-  animation: bombSafe .18s infinite alternate;
-  opacity: .45;
-}
-
-@keyframes bombSafe {
-  from { opacity: .25; transform: translate(-50%, -50%) scale(.9); }
-  to { opacity: .85; transform: translate(-50%, -50%) scale(1.06); }
-}
-
-.explosion {
-  position: absolute;
-  width: 135px;
-  height: 135px;
-  transform: translate(-50%, -50%) scale(.35);
-  z-index: 40;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  pointer-events: none;
-  animation: boom .45s ease-out forwards;
-}
-
-@keyframes boom {
-  from { opacity: 1; transform: translate(-50%, -50%) scale(.35); }
-  to { opacity: 0; transform: translate(-50%, -50%) scale(1.45); }
-}
-
-.pop {
-  position: absolute;
-  font-size: 38px;
-  pointer-events: none;
-  animation: pop .6s ease-out forwards;
-  z-index: 30;
-}
-
-@keyframes pop {
-  from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
-  to { opacity: 0; transform: translate(-50%, -95%) scale(1.5); }
+.small{
+  color:#716894;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
-<div id="FX_ROOT">
+<div class="wrap">
+  <h1>Редактор игры «Гусеница»</h1>
 
+  <div class="card">
+    <h2>Картинки для сбора</h2>
+    <p class="small">Вставь 10 ссылок на картинки. Формат подходит такой: https://i.postimg.cc/tgRKx3PR/RL-C-EDI.png</p>
+    <div class="grid" id="imageFields"></div>
+  </div>
+
+  <div class="card">
+    <h2>Тексты игры</h2>
+
+    <label>Заголовок перед игрой</label>
+    <input id="startTitle" value="Гусеница">
+
+    <label>Текст перед игрой</label>
+    <input id="startText" value="Собери 10 картинок и не попади в бомбочки.">
+
+    <label>Кнопка старта</label>
+    <input id="startButton" value="Начать игру">
+
+    <label>Заголовок победы</label>
+    <input id="winTitle" value="Победа!">
+
+    <label>Текст победы</label>
+    <input id="winText" value="Ты собрал все картинки!">
+
+    <label>Заголовок проигрыша</label>
+    <input id="loseTitle" value="Попробуй ещё раз!">
+
+    <label>Текст проигрыша</label>
+    <input id="loseText" value="Гусеница столкнулась с бомбочкой или краем поля.">
+
+    <label>Кнопка повтора</label>
+    <input id="restartButton" value="Играть снова">
+  </div>
+
+  <div class="card">
+    <button onclick="generate()">Сгенерировать iframe для Genially</button>
+  </div>
+
+  <div class="card">
+    <h2>Код iframe</h2>
+    <textarea id="result" readonly></textarea>
+    <br><br>
+    <button onclick="copyCode()">Скопировать код</button>
+  </div>
+
+  <div class="card">
+    <h2>Предпросмотр</h2>
+    <iframe id="preview" class="preview"></iframe>
+  </div>
+</div>
+
+<script>
+const defaultImg = "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png";
+
+const imageFields = document.getElementById("imageFields");
+
+for(let i=1;i<=10;i++){
+  const box = document.createElement("div");
+  box.innerHTML = `
+    <label>Картинка ${i}</label>
+    <input class="itemInput" value="${defaultImg}">
+  `;
+  imageFields.appendChild(box);
+}
+
+function escAttr(str){
+  return str
+    .replaceAll("&","&amp;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function getConfig(){
+  return {
+    images:[...document.querySelectorAll(".itemInput")]
+      .map(i=>i.value.trim())
+      .filter(Boolean),
+    startTitle:document.getElementById("startTitle").value,
+    startText:document.getElementById("startText").value,
+    startButton:document.getElementById("startButton").value,
+    winTitle:document.getElementById("winTitle").value,
+    winText:document.getElementById("winText").value,
+    loseTitle:document.getElementById("loseTitle").value,
+    loseText:document.getElementById("loseText").value,
+    restartButton:document.getElementById("restartButton").value
+  };
+}
+
+function gameHTML(config){
+return `<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#bda8ff,#6d78dd 70%);}
+#FX_ROOT{position:relative;width:100vw;height:100vh;overflow:hidden;user-select:none;cursor:default;}
+#gameArea{
+  position:absolute;inset:24px;border-radius:46px;overflow:hidden;
+  background-image:url("https://github.com/propodgotovkaa-creator/zmeyka/blob/main/assets/assets:game-background.png?raw=true");
+  background-size:100% 100%;background-position:center;background-repeat:no-repeat;
+  box-shadow:0 18px 45px rgba(0,0,0,.28),inset 0 0 25px rgba(255,255,255,.10);
+  border:8px solid rgba(255,255,255,.12);
+}
+#score{
+  position:absolute;top:86px;left:132px;width:130px;height:52px;
+  display:flex;align-items:center;justify-content:center;z-index:35;
+  font-size:30px;font-weight:900;letter-spacing:1px;color:#fff;
+  background:transparent;border:none;box-shadow:none;padding:0;
+  transform:rotate(-2deg);
+  text-shadow:0 3px 0 rgba(84,44,140,.85),0 0 8px rgba(255,255,255,.55);
+  pointer-events:none;
+}
+#startScreen,#endScreen{position:absolute;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.72);text-align:center;}
+.panel{background:white;border-radius:30px;padding:34px 42px;box-shadow:0 16px 45px rgba(0,0,0,.22);max-width:500px;}
+.panel h1{margin:0 0 16px;font-size:42px;color:#28566c;}
+.panel p{font-size:21px;color:#48616d;}
+button{border:0;border-radius:22px;padding:16px 34px;font-size:24px;font-weight:900;background:linear-gradient(#ffe27a,#ffbd38);color:#5a3b00;cursor:pointer;box-shadow:0 8px 0 #d49b20,0 12px 18px rgba(0,0,0,.18);}
+button:active{transform:translateY(4px);box-shadow:0 4px 0 #d49b20;}
+#crosshair{position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.95);border-radius:50%;pointer-events:none;z-index:7;display:none;transform:translate(-50%,-50%);background:rgba(255,255,255,.22);box-shadow:0 0 0 5px rgba(255,255,255,.18),0 0 14px rgba(255,255,255,.9),0 0 22px rgba(111,210,255,.75);}
+#crosshair:before{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;background:rgba(40,86,108,.75);border-radius:50%;transform:translate(-50%,-50%);}
+.snake-part{position:absolute;transform:translate3d(-50%,-50%,0);pointer-events:none;background-repeat:no-repeat;background-position:center;background-size:contain;z-index:10;will-change:transform,left,top;filter:drop-shadow(0 6px 6px rgba(54,0,80,.16));}
+.snake-head{width:86px;height:86px;z-index:20;}
+.snake-body{width:70px;height:70px;}
+.snake-tail{width:62px;height:62px;}
+.collect-item{position:absolute;width:92px;height:92px;transform:translate(-50%,-50%);z-index:8;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));animation:floatItem 1.2s ease-in-out infinite alternate;}
+@keyframes floatItem{from{transform:translate(-50%,-50%) scale(.94);}to{transform:translate(-50%,-58%) scale(1.06);}}
+.bomb{position:absolute;width:72px;height:72px;transform:translate(-50%,-50%);z-index:9;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35));animation:bombFloat 1.2s ease-in-out infinite alternate;}
+@keyframes bombFloat{from{transform:translate(-50%,-50%) scale(.96) rotate(-2deg);}to{transform:translate(-50%,-56%) scale(1.04) rotate(2deg);}}
+.bomb.safe{animation:bombSafe .18s infinite alternate;opacity:.45;}
+@keyframes bombSafe{from{opacity:.25;transform:translate(-50%,-50%) scale(.9);}to{opacity:.85;transform:translate(-50%,-50%) scale(1.06);}}
+.explosion{position:absolute;width:135px;height:135px;transform:translate(-50%,-50%) scale(.35);z-index:40;background-repeat:no-repeat;background-position:center;background-size:contain;pointer-events:none;animation:boom .45s ease-out forwards;}
+@keyframes boom{from{opacity:1;transform:translate(-50%,-50%) scale(.35);}to{opacity:0;transform:translate(-50%,-50%) scale(1.45);}}
+.pop{position:absolute;font-size:38px;pointer-events:none;animation:pop .6s ease-out forwards;z-index:30;}
+@keyframes pop{from{opacity:1;transform:translate(-50%,-50%) scale(.6);}to{opacity:0;transform:translate(-50%,-95%) scale(1.5);}}
+</style>
+</head>
+<body>
+<div id="FX_ROOT">
   <div id="gameArea"></div>
   <div id="score">0 / 10</div>
   <div id="crosshair"></div>
 
   <div id="startScreen">
     <div class="panel">
-      <h1>Гусеница</h1>
-      <p>Собери 10 картинок и не попади в бомбочки.</p>
-      <button id="startBtn">Начать игру</button>
+      <h1 id="startTitle"></h1>
+      <p id="startText"></p>
+      <button id="startBtn"></button>
     </div>
   </div>
 
   <div id="endScreen" style="display:none;">
     <div class="panel">
-      <h1 id="endTitle">Победа!</h1>
-      <p id="endText">Ты собрал все картинки!</p>
-      <button id="restartBtn">Играть снова</button>
+      <h1 id="endTitle"></h1>
+      <p id="endText"></p>
+      <button id="restartBtn"></button>
     </div>
   </div>
-
 </div>
 
 <script>
 (function(){
-  const root = document.getElementById("FX_ROOT");
-  const area = document.getElementById("gameArea");
-  const scoreEl = document.getElementById("score");
-  const startScreen = document.getElementById("startScreen");
-  const endScreen = document.getElementById("endScreen");
-  const startBtn = document.getElementById("startBtn");
-  const restartBtn = document.getElementById("restartBtn");
-  const endTitle = document.getElementById("endTitle");
-  const endText = document.getElementById("endText");
-  const crosshair = document.getElementById("crosshair");
+const USER_CONFIG=${JSON.stringify(config)};
 
-  const SETTINGS = {
-    targetCount: 10,
-    snakeSpeed: 3,
-    segmentDistance: 24,
-    startLength: 8,
-    growBy: 1,
-    pointerSmooth: .1,
-    bodyFollow: .32,
+const root=document.getElementById("FX_ROOT");
+const area=document.getElementById("gameArea");
+const scoreEl=document.getElementById("score");
+const startScreen=document.getElementById("startScreen");
+const endScreen=document.getElementById("endScreen");
+const startBtn=document.getElementById("startBtn");
+const restartBtn=document.getElementById("restartBtn");
+const endTitle=document.getElementById("endTitle");
+const endText=document.getElementById("endText");
+const crosshair=document.getElementById("crosshair");
 
-    bombLifeMs: 10000,
-    bombSafeMs: 1000,
-    bombRespawnDelayMs: 700,
-    wallPadding: 92,
+document.getElementById("startTitle").textContent=USER_CONFIG.startTitle;
+document.getElementById("startText").textContent=USER_CONFIG.startText;
+startBtn.textContent=USER_CONFIG.startButton;
+restartBtn.textContent=USER_CONFIG.restartButton;
 
-    itemImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png",
+const SETTINGS={
+ targetCount:10,snakeSpeed:3,segmentDistance:24,startLength:8,growBy:1,pointerSmooth:.1,bodyFollow:.32,
+ bombLifeMs:5000,bombSafeMs:1000,bombRespawnDelayMs:700,wallPadding:92,
+ itemImages:USER_CONFIG.images.length?USER_CONFIG.images:["${defaultImg}"],
+ headImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
+ bodyImages:[
+  "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-1.svg",
+  "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
+ ],
+ tailImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
+ bombImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
+ explosionImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
+};
 
-    headImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
-    bodyImages: [
-      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-1.svg",
-      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
-    ],
-    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
-    bombImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
-    explosionImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
-  };
+let playing=false,collected=0,mouse={x:300,y:300},targetMouse={x:300,y:300};
+let snake=[],item=null,bombs=[],animationId=null,bombTimer=null;
 
-  let playing = false;
-  let collected = 0;
-  let mouse = { x: 300, y: 300 };
-  let targetMouse = { x: 300, y: 300 };
-  let snake = [];
-  let item = null;
-  let bombs = [];
-  let animationId = null;
-  let bombTimer = null;
+function areaRect(){return area.getBoundingClientRect();}
+function rand(min,max){return Math.random()*(max-min)+min;}
+function distance(a,b){const dx=a.x-b.x,dy=a.y-b.y;return Math.sqrt(dx*dx+dy*dy);}
+function placeElement(el,x,y){el.style.left=x+"px";el.style.top=y+"px";}
+function currentBombCount(){if(collected>=8)return 8;if(collected>=6)return 7;if(collected>=3)return 5;return 4;}
 
-  function areaRect(){
-    return area.getBoundingClientRect();
+function clearGame(){
+ area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el=>el.remove());
+ bombs=[];snake=[];item=null;
+ if(animationId)cancelAnimationFrame(animationId);
+ if(bombTimer)clearTimeout(bombTimer);
+}
+
+function safeRandomPoint(margin=155){
+ const r=areaRect();
+ return{x:rand(margin,r.width-margin),y:rand(margin,r.height-margin)};
+}
+
+function createSnakePart(type,index=0){
+ const part=document.createElement("div");
+ part.classList.add("snake-part");
+ if(type==="head"){
+  part.classList.add("snake-head");
+  part.style.backgroundImage='url("'+SETTINGS.headImage+'")';
+ }else if(type==="tail"){
+  part.classList.add("snake-tail");
+  part.style.backgroundImage='url("'+SETTINGS.tailImage+'")';
+ }else{
+  part.classList.add("snake-body");
+  part.style.backgroundImage='url("'+SETTINGS.bodyImages[index%SETTINGS.bodyImages.length]+'")';
+ }
+ area.appendChild(part);
+ return part;
+}
+
+function startGame(){
+ clearGame();
+ playing=true;collected=0;scoreEl.textContent="0 / "+SETTINGS.targetCount;
+ startScreen.style.display="none";endScreen.style.display="none";crosshair.style.display="block";root.style.cursor="none";
+ const r=areaRect(),startX=r.width/2,startY=r.height/2;
+ mouse.x=startX+180;mouse.y=startY;targetMouse.x=mouse.x;targetMouse.y=mouse.y;
+
+ for(let i=0;i<SETTINGS.startLength;i++){
+  let type="body";
+  if(i===0)type="head";else if(i===SETTINGS.startLength-1)type="tail";
+  const part=createSnakePart(type,i);
+  snake.push({x:startX-i*SETTINGS.segmentDistance,y:startY,el:part,type:type});
+ }
+ spawnItem();spawnBombsCycle();loop();
+}
+
+function endGame(win){
+ playing=false;
+ if(animationId)cancelAnimationFrame(animationId);
+ if(bombTimer)clearTimeout(bombTimer);
+ crosshair.style.display="none";root.style.cursor="default";endScreen.style.display="flex";
+ if(win){
+  endTitle.textContent=USER_CONFIG.winTitle;
+  endText.textContent=USER_CONFIG.winText;
+ }else{
+  endTitle.textContent=USER_CONFIG.loseTitle;
+  endText.textContent=USER_CONFIG.loseText;
+ }
+}
+
+function spawnItem(){
+ if(item&&item.el)item.el.remove();
+ let pos,tries=0;
+ do{
+  pos=safeRandomPoint(155);tries++;
+ }while(((snake[0]&&distance(pos,snake[0])<180)||bombs.some(b=>distance(pos,b)<180))&&tries<120);
+
+ const el=document.createElement("div");
+ el.className="collect-item";
+ const img=SETTINGS.itemImages[collected%SETTINGS.itemImages.length];
+ el.style.backgroundImage='url("'+img+'")';
+ area.appendChild(el);
+ item={x:pos.x,y:pos.y,el:el};
+ placeElement(el,pos.x,pos.y);
+}
+
+function collectItem(){
+ collected++;
+ scoreEl.textContent=collected+" / "+SETTINGS.targetCount;
+ makePop(item.x,item.y,"✨");
+ if(item&&item.el)item.el.remove();
+ item=null;
+ growSnake();
+ if(collected>=SETTINGS.targetCount){endGame(true);return;}
+ spawnItem();
+}
+
+function growSnake(){
+ const oldTail=snake[snake.length-1];
+ oldTail.el.classList.remove("snake-tail");
+ oldTail.el.classList.add("snake-body");
+ oldTail.el.style.backgroundImage='url("'+SETTINGS.bodyImages[snake.length%SETTINGS.bodyImages.length]+'")';
+ oldTail.type="body";
+
+ for(let i=0;i<SETTINGS.growBy;i++){
+  const isLast=i===SETTINGS.growBy-1;
+  const type=isLast?"tail":"body";
+  const part=createSnakePart(type,snake.length+i);
+  snake.push({x:oldTail.x,y:oldTail.y,el:part,type:type});
+ }
+}
+
+function spawnBombsCycle(){
+ bombs.forEach(b=>{if(b.el)b.el.remove();});
+ bombs=[];
+ const count=currentBombCount();
+ for(let i=0;i<count;i++)spawnBomb();
+
+ bombTimer=setTimeout(()=>{
+  bombs.forEach(b=>{if(b.el){makeExplosion(b.x,b.y);b.el.remove();}});
+  bombs=[];
+  bombTimer=setTimeout(()=>{if(playing)spawnBombsCycle();},SETTINGS.bombRespawnDelayMs);
+ },SETTINGS.bombLifeMs);
+}
+
+function spawnBomb(){
+ let pos,tries=0;
+ do{
+  pos=safeRandomPoint(155);tries++;
+ }while(((snake[0]&&distance(pos,snake[0])<200)||(item&&distance(pos,item)<200)||bombs.some(b=>distance(pos,b)<185))&&tries<180);
+
+ const el=document.createElement("div");
+ el.className="bomb safe";
+ el.style.backgroundImage='url("'+SETTINGS.bombImage+'")';
+ area.appendChild(el);
+ placeElement(el,pos.x,pos.y);
+
+ const bomb={x:pos.x,y:pos.y,el:el,safe:true};
+ bombs.push(bomb);
+
+ setTimeout(()=>{
+  if(!playing||!bomb.el)return;
+  bomb.safe=false;
+  bomb.el.classList.remove("safe");
+ },SETTINGS.bombSafeMs);
+}
+
+function makeExplosion(x,y){
+ const el=document.createElement("div");
+ el.className="explosion";
+ el.style.backgroundImage='url("'+SETTINGS.explosionImage+'")';
+ area.appendChild(el);
+ placeElement(el,x,y);
+ setTimeout(()=>el.remove(),500);
+}
+
+function makePop(x,y,text){
+ const el=document.createElement("div");
+ el.className="pop";
+ el.textContent=text;
+ area.appendChild(el);
+ placeElement(el,x,y);
+ setTimeout(()=>el.remove(),650);
+}
+
+function updateSnake(){
+ mouse.x+=(targetMouse.x-mouse.x)*SETTINGS.pointerSmooth;
+ mouse.y+=(targetMouse.y-mouse.y)*SETTINGS.pointerSmooth;
+
+ const head=snake[0];
+ const dx=mouse.x-head.x,dy=mouse.y-head.y;
+ const dist=Math.sqrt(dx*dx+dy*dy)||1;
+ const step=Math.min(SETTINGS.snakeSpeed,dist);
+
+ head.x+=(dx/dist)*step;
+ head.y+=(dy/dist)*step;
+
+ let angle=Math.atan2(dy,Math.abs(dx))*180/Math.PI;
+ if(angle>55)angle=55;
+ if(angle<-55)angle=-55;
+
+ const faceSide=dx<0?-1:1;
+ head.el.style.transform="translate3d(-50%,-50%,0) rotate("+angle+"deg) scaleX("+faceSide+")";
+
+ for(let i=1;i<snake.length;i++){
+  const prev=snake[i-1],cur=snake[i];
+  const dx2=prev.x-cur.x,dy2=prev.y-cur.y;
+  const d=Math.sqrt(dx2*dx2+dy2*dy2)||1;
+
+  if(d>SETTINGS.segmentDistance){
+   const move=(d-SETTINGS.segmentDistance)*SETTINGS.bodyFollow;
+   cur.x+=(dx2/d)*move;
+   cur.y+=(dy2/d)*move;
   }
 
-  function rand(min, max){
-    return Math.random() * (max - min) + min;
+  if(cur.type==="tail"){
+   const tailAngle=Math.atan2(dy2,dx2)*180/Math.PI;
+   cur.el.style.transform="translate3d(-50%,-50%,0) rotate("+tailAngle+"deg)";
+  }else{
+   cur.el.style.transform="translate3d(-50%,-50%,0)";
   }
+ }
 
-  function distance(a, b){
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
+ snake.forEach(part=>{
+  part.el.style.left=part.x+"px";
+  part.el.style.top=part.y+"px";
+ });
+}
+
+function checkCollisions(){
+ const r=areaRect(),head=snake[0],pad=SETTINGS.wallPadding;
+
+ if(head.x<pad||head.y<pad||head.x>r.width-pad||head.y>r.height-pad){
+  endGame(false);return;
+ }
+
+ if(item&&distance(head,item)<58){
+  collectItem();return;
+ }
+
+ for(const bomb of bombs){
+  if(!bomb.safe&&distance(head,bomb)<50){
+   makeExplosion(bomb.x,bomb.y);
+   if(bomb.el)bomb.el.remove();
+   playing=false;
+   setTimeout(()=>endGame(false),350);
+   return;
   }
-
-  function placeElement(el, x, y){
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-  }
-
-  function currentBombCount(){
-    if (collected >= 8) return 7;
-    if (collected >= 7) return 6;
-    if (collected >= 4) return 5;
-    return 4;
-  }
-
-  function clearGame(){
-    area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el => el.remove());
-    bombs = [];
-    snake = [];
-    item = null;
-
-    if(animationId) cancelAnimationFrame(animationId);
-    if(bombTimer) clearTimeout(bombTimer);
-  }
-
-  function safeRandomPoint(margin = 150){
-    const rect = areaRect();
-    return {
-      x: rand(margin, rect.width - margin),
-      y: rand(margin, rect.height - margin)
-    };
-  }
-
-  function createSnakePart(type, index = 0){
-    const part = document.createElement("div");
-    part.classList.add("snake-part");
-
-    if(type === "head"){
-      part.classList.add("snake-head");
-      part.style.backgroundImage = `url("${SETTINGS.headImage}")`;
-    } else if(type === "tail"){
-      part.classList.add("snake-tail");
-      part.style.backgroundImage = `url("${SETTINGS.tailImage}")`;
-    } else {
-      part.classList.add("snake-body");
-      part.style.backgroundImage = `url("${SETTINGS.bodyImages[index % SETTINGS.bodyImages.length]}")`;
-    }
-
-    area.appendChild(part);
-    return part;
-  }
-
-  function startGame(){
-    clearGame();
-
-    playing = true;
-    collected = 0;
-    scoreEl.textContent = "0 / " + SETTINGS.targetCount;
-
-    startScreen.style.display = "none";
-    endScreen.style.display = "none";
-    crosshair.style.display = "block";
-    root.style.cursor = "none";
-
-    const rect = areaRect();
-    const startX = rect.width / 2;
-    const startY = rect.height / 2;
-
-    mouse.x = startX + 180;
-    mouse.y = startY;
-    targetMouse.x = mouse.x;
-    targetMouse.y = mouse.y;
-
-    for(let i = 0; i < SETTINGS.startLength; i++){
-      let type = "body";
-
-      if(i === 0) type = "head";
-      else if(i === SETTINGS.startLength - 1) type = "tail";
-
-      const part = createSnakePart(type, i);
-
-      snake.push({
-        x: startX - i * SETTINGS.segmentDistance,
-        y: startY,
-        el: part,
-        type
-      });
-    }
-
-    spawnItem();
-    spawnBombsCycle();
-    loop();
-  }
-
-  function endGame(win){
-    playing = false;
-
-    if(animationId) cancelAnimationFrame(animationId);
-    if(bombTimer) clearTimeout(bombTimer);
-
-    crosshair.style.display = "none";
-    root.style.cursor = "default";
-    endScreen.style.display = "flex";
-
-    if(win){
-      endTitle.textContent = "Победа!";
-      endText.textContent = "Ты собрал все картинки!";
-    } else {
-      endTitle.textContent = "Попробуй ещё раз!";
-      endText.textContent = "Гусеница столкнулась с бомбочкой или краем поля.";
-    }
-  }
-
-  function spawnItem(){
-    if(item && item.el) item.el.remove();
-
-    let pos, tries = 0;
-
-    do {
-      pos = safeRandomPoint(155);
-      tries++;
-    } while (
-      (
-        (snake[0] && distance(pos, snake[0]) < 180) ||
-        bombs.some(b => distance(pos, b) < 180)
-      ) && tries < 120
-    );
-
-    const el = document.createElement("div");
-    el.className = "collect-item";
-    el.style.backgroundImage = `url("${SETTINGS.itemImage}")`;
-    area.appendChild(el);
-
-    item = { x: pos.x, y: pos.y, el };
-    placeElement(el, pos.x, pos.y);
-  }
-
-  function collectItem(){
-    collected++;
-    scoreEl.textContent = collected + " / " + SETTINGS.targetCount;
-
-    makePop(item.x, item.y, "✨");
-
-    if(item && item.el) item.el.remove();
-    item = null;
-
-    growSnake();
-
-    if(collected >= SETTINGS.targetCount){
-      endGame(true);
-      return;
-    }
-
-    spawnItem();
-  }
-
-  function growSnake(){
-    const oldTail = snake[snake.length - 1];
-
-    oldTail.el.classList.remove("snake-tail");
-    oldTail.el.classList.add("snake-body");
-    oldTail.el.style.backgroundImage =
-      `url("${SETTINGS.bodyImages[snake.length % SETTINGS.bodyImages.length]}")`;
-    oldTail.type = "body";
-
-    for(let i = 0; i < SETTINGS.growBy; i++){
-      const isLast = i === SETTINGS.growBy - 1;
-      const type = isLast ? "tail" : "body";
-      const part = createSnakePart(type, snake.length + i);
-
-      snake.push({
-        x: oldTail.x,
-        y: oldTail.y,
-        el: part,
-        type
-      });
-    }
-  }
-
-  function spawnBombsCycle(){
-    bombs.forEach(b => {
-      if(b.el) b.el.remove();
-    });
-
-    bombs = [];
-
-    const count = currentBombCount();
-
-    for(let i = 0; i < count; i++){
-      spawnBomb();
-    }
-
-    bombTimer = setTimeout(() => {
-      bombs.forEach(b => {
-        if(b.el){
-          makeExplosion(b.x, b.y);
-          b.el.remove();
-        }
-      });
-
-      bombs = [];
-
-      bombTimer = setTimeout(() => {
-        if(playing) spawnBombsCycle();
-      }, SETTINGS.bombRespawnDelayMs);
-
-    }, SETTINGS.bombLifeMs);
-  }
-
-  function spawnBomb(){
-    let pos, tries = 0;
-
-    do {
-      pos = safeRandomPoint(155);
-      tries++;
-    } while (
-      (
-        (snake[0] && distance(pos, snake[0]) < 200) ||
-        (item && distance(pos, item) < 200) ||
-        bombs.some(b => distance(pos, b) < 185)
-      ) && tries < 180
-    );
-
-    const el = document.createElement("div");
-    el.className = "bomb safe";
-    el.style.backgroundImage = `url("${SETTINGS.bombImage}")`;
-    area.appendChild(el);
-    placeElement(el, pos.x, pos.y);
-
-    const bomb = { x: pos.x, y: pos.y, el, safe: true };
-    bombs.push(bomb);
-
-    setTimeout(() => {
-      if(!playing || !bomb.el) return;
-      bomb.safe = false;
-      bomb.el.classList.remove("safe");
-    }, SETTINGS.bombSafeMs);
-  }
-
-  function makeExplosion(x, y){
-    const el = document.createElement("div");
-    el.className = "explosion";
-    el.style.backgroundImage = `url("${SETTINGS.explosionImage}")`;
-    area.appendChild(el);
-    placeElement(el, x, y);
-
-    setTimeout(() => el.remove(), 500);
-  }
-
-  function makePop(x, y, text){
-    const el = document.createElement("div");
-    el.className = "pop";
-    el.textContent = text;
-    area.appendChild(el);
-    placeElement(el, x, y);
-
-    setTimeout(() => el.remove(), 650);
-  }
-
-  function updateSnake(){
-    mouse.x += (targetMouse.x - mouse.x) * SETTINGS.pointerSmooth;
-    mouse.y += (targetMouse.y - mouse.y) * SETTINGS.pointerSmooth;
-
-    const head = snake[0];
-    const dx = mouse.x - head.x;
-    const dy = mouse.y - head.y;
-    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const step = Math.min(SETTINGS.snakeSpeed, dist);
-
-    head.x += (dx / dist) * step;
-    head.y += (dy / dist) * step;
-
-    let angle = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
-
-    if(angle > 55) angle = 55;
-    if(angle < -55) angle = -55;
-
-    const faceSide = dx < 0 ? -1 : 1;
-
-    head.el.style.transform =
-      `translate3d(-50%,-50%,0) rotate(${angle}deg) scaleX(${faceSide})`;
-
-    for(let i = 1; i < snake.length; i++){
-      const prev = snake[i - 1];
-      const cur = snake[i];
-
-      const dx2 = prev.x - cur.x;
-      const dy2 = prev.y - cur.y;
-      const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
-
-      if(d > SETTINGS.segmentDistance){
-        const move = (d - SETTINGS.segmentDistance) * SETTINGS.bodyFollow;
-        cur.x += (dx2 / d) * move;
-        cur.y += (dy2 / d) * move;
-      }
-
-      if(cur.type === "tail"){
-        const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
-        cur.el.style.transform =
-          `translate3d(-50%,-50%,0) rotate(${tailAngle}deg)`;
-      } else {
-        cur.el.style.transform = "translate3d(-50%,-50%,0)";
-      }
-    }
-
-    snake.forEach(part => {
-      part.el.style.left = part.x + "px";
-      part.el.style.top = part.y + "px";
-    });
-  }
-
-  function checkCollisions(){
-    const rect = areaRect();
-    const head = snake[0];
-    const pad = SETTINGS.wallPadding;
-
-    if(
-      head.x < pad ||
-      head.y < pad ||
-      head.x > rect.width - pad ||
-      head.y > rect.height - pad
-    ){
-      endGame(false);
-      return;
-    }
-
-    if(item && distance(head, item) < 58){
-      collectItem();
-      return;
-    }
-
-    for(const bomb of bombs){
-      if(!bomb.safe && distance(head, bomb) < 50){
-        makeExplosion(bomb.x, bomb.y);
-
-        if(bomb.el) bomb.el.remove();
-
-        playing = false;
-
-        setTimeout(() => endGame(false), 350);
-        return;
-      }
-    }
-  }
-
-  function loop(){
-    if(!playing) return;
-
-    updateSnake();
-    checkCollisions();
-
-    animationId = requestAnimationFrame(loop);
-  }
-
-  function movePointer(clientX, clientY){
-    const rect = areaRect();
-
-    targetMouse.x = clientX - rect.left;
-    targetMouse.y = clientY - rect.top;
-
-    crosshair.style.left = clientX + "px";
-    crosshair.style.top = clientY + "px";
-  }
-
-  root.addEventListener("mousemove", e => {
-    if(!playing) return;
-    movePointer(e.clientX, e.clientY);
-  });
-
-  root.addEventListener("touchmove", e => {
-    if(!playing) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    movePointer(t.clientX, t.clientY);
-  }, { passive:false });
-
-  startBtn.addEventListener("click", startGame);
-  restartBtn.addEventListener("click", startGame);
+ }
+}
+
+function loop(){
+ if(!playing)return;
+ updateSnake();
+ checkCollisions();
+ animationId=requestAnimationFrame(loop);
+}
+
+function movePointer(clientX,clientY){
+ const r=areaRect();
+ targetMouse.x=clientX-r.left;
+ targetMouse.y=clientY-r.top;
+ crosshair.style.left=clientX+"px";
+ crosshair.style.top=clientY+"px";
+}
+
+root.addEventListener("mousemove",e=>{if(!playing)return;movePointer(e.clientX,e.clientY);});
+root.addEventListener("touchmove",e=>{if(!playing)return;e.preventDefault();const t=e.touches[0];movePointer(t.clientX,t.clientY);},{passive:false});
+
+startBtn.addEventListener("click",startGame);
+restartBtn.addEventListener("click",startGame);
 })();
+<\/script>
+</body>
+</html>`;
+}
+
+function generate(){
+  const config = getConfig();
+  const html = gameHTML(config);
+  const iframe = `<iframe srcdoc="${escAttr(html)}" style="width:100%;height:100%;border:0;background:transparent;" sandbox="allow-scripts allow-same-origin"></iframe>`;
+  document.getElementById("result").value = iframe;
+  document.getElementById("preview").srcdoc = html;
+}
+
+function copyCode(){
+  const result = document.getElementById("result");
+  result.select();
+  document.execCommand("copy");
+}
+
+generate();
 </script>
 </body>
 </html>
