@@ -33,7 +33,7 @@ html, body {
   background-image:
     url("https://github.com/propodgotovkaa-creator/zmeyka/blob/main/assets/assets:game-background.png?raw=true");
 
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
 
@@ -43,26 +43,34 @@ html, body {
 
   border: 8px solid rgba(255,255,255,.12);
 }
+
 #score {
   position: absolute;
-  top: 58px;
-  left: 74px;
-  width: 210px;
-  height: 82px;
+  top: 70px;
+  left: 112px;
+
+  width: 150px;
+  height: 65px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   z-index: 35;
-  font-size: 38px;
+
+  font-size: 32px;
   font-weight: 900;
   color: white;
+
   background: transparent;
   border: none;
   box-shadow: none;
   padding: 0;
+
   text-shadow:
     0 3px 0 rgba(75,20,130,.75),
-    0 0 7px rgba(255,255,255,.5);
+    0 0 6px rgba(255,255,255,.45);
+
   pointer-events: none;
 }
 
@@ -154,9 +162,21 @@ button:active {
   filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
 }
 
-.snake-head { width: 86px; height: 86px; z-index: 20; }
-.snake-body { width: 70px; height: 70px; }
-.snake-tail { width: 62px; height: 62px; }
+.snake-head {
+  width: 86px;
+  height: 86px;
+  z-index: 20;
+}
+
+.snake-body {
+  width: 70px;
+  height: 70px;
+}
+
+.snake-tail {
+  width: 62px;
+  height: 62px;
+}
 
 .collect-item {
   position: absolute;
@@ -239,6 +259,7 @@ button:active {
 
 <body>
 <div id="FX_ROOT">
+
   <div id="gameArea"></div>
   <div id="score">0 / 10</div>
   <div id="crosshair"></div>
@@ -258,6 +279,7 @@ button:active {
       <button id="restartBtn">Играть снова</button>
     </div>
   </div>
+
 </div>
 
 <script>
@@ -309,16 +331,21 @@ button:active {
   let animationId = null;
   let bombTimer = null;
 
-  function areaRect(){ return area.getBoundingClientRect(); }
-  function rand(min,max){ return Math.random() * (max - min) + min; }
+  function areaRect(){
+    return area.getBoundingClientRect();
+  }
 
-  function distance(a,b){
+  function rand(min, max){
+    return Math.random() * (max - min) + min;
+  }
+
+  function distance(a, b){
     const dx = a.x - b.x;
     const dy = a.y - b.y;
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  function placeElement(el,x,y){
+  function placeElement(el, x, y){
     el.style.left = x + "px";
     el.style.top = y + "px";
   }
@@ -335,11 +362,12 @@ button:active {
     bombs = [];
     snake = [];
     item = null;
+
     if(animationId) cancelAnimationFrame(animationId);
     if(bombTimer) clearTimeout(bombTimer);
   }
 
-  function safeRandomPoint(margin = 135){
+  function safeRandomPoint(margin = 150){
     const rect = areaRect();
     return {
       x: rand(margin, rect.width - margin),
@@ -347,7 +375,7 @@ button:active {
     };
   }
 
-  function createSnakePart(type,index = 0){
+  function createSnakePart(type, index = 0){
     const part = document.createElement("div");
     part.classList.add("snake-part");
 
@@ -389,10 +417,12 @@ button:active {
 
     for(let i = 0; i < SETTINGS.startLength; i++){
       let type = "body";
+
       if(i === 0) type = "head";
       else if(i === SETTINGS.startLength - 1) type = "tail";
 
-      const part = createSnakePart(type,i);
+      const part = createSnakePart(type, i);
+
       snake.push({
         x: startX - i * SETTINGS.segmentDistance,
         y: startY,
@@ -431,12 +461,12 @@ button:active {
     let pos, tries = 0;
 
     do {
-      pos = safeRandomPoint(150);
+      pos = safeRandomPoint(155);
       tries++;
     } while (
       (
-        (snake[0] && distance(pos,snake[0]) < 180) ||
-        bombs.some(b => distance(pos,b) < 180)
+        (snake[0] && distance(pos, snake[0]) < 180) ||
+        bombs.some(b => distance(pos, b) < 180)
       ) && tries < 120
     );
 
@@ -446,14 +476,14 @@ button:active {
     area.appendChild(el);
 
     item = { x: pos.x, y: pos.y, el };
-    placeElement(el,pos.x,pos.y);
+    placeElement(el, pos.x, pos.y);
   }
 
   function collectItem(){
     collected++;
     scoreEl.textContent = collected + " / " + SETTINGS.targetCount;
 
-    makePop(item.x,item.y,"✨");
+    makePop(item.x, item.y, "✨");
 
     if(item && item.el) item.el.remove();
     item = null;
@@ -495,6 +525,7 @@ button:active {
     bombs.forEach(b => {
       if(b.el) b.el.remove();
     });
+
     bombs = [];
 
     const count = currentBombCount();
@@ -506,7 +537,7 @@ button:active {
     bombTimer = setTimeout(() => {
       bombs.forEach(b => {
         if(b.el){
-          makeExplosion(b.x,b.y);
+          makeExplosion(b.x, b.y);
           b.el.remove();
         }
       });
@@ -524,13 +555,13 @@ button:active {
     let pos, tries = 0;
 
     do {
-      pos = safeRandomPoint(150);
+      pos = safeRandomPoint(155);
       tries++;
     } while (
       (
-        (snake[0] && distance(pos,snake[0]) < 200) ||
-        (item && distance(pos,item) < 200) ||
-        bombs.some(b => distance(pos,b) < 185)
+        (snake[0] && distance(pos, snake[0]) < 200) ||
+        (item && distance(pos, item) < 200) ||
+        bombs.some(b => distance(pos, b) < 185)
       ) && tries < 180
     );
 
@@ -538,7 +569,7 @@ button:active {
     el.className = "bomb safe";
     el.style.backgroundImage = `url("${SETTINGS.bombImage}")`;
     area.appendChild(el);
-    placeElement(el,pos.x,pos.y);
+    placeElement(el, pos.x, pos.y);
 
     const bomb = { x: pos.x, y: pos.y, el, safe: true };
     bombs.push(bomb);
@@ -550,22 +581,24 @@ button:active {
     }, SETTINGS.bombSafeMs);
   }
 
-  function makeExplosion(x,y){
+  function makeExplosion(x, y){
     const el = document.createElement("div");
     el.className = "explosion";
     el.style.backgroundImage = `url("${SETTINGS.explosionImage}")`;
     area.appendChild(el);
-    placeElement(el,x,y);
-    setTimeout(() => el.remove(),500);
+    placeElement(el, x, y);
+
+    setTimeout(() => el.remove(), 500);
   }
 
-  function makePop(x,y,text){
+  function makePop(x, y, text){
     const el = document.createElement("div");
     el.className = "pop";
     el.textContent = text;
     area.appendChild(el);
-    placeElement(el,x,y);
-    setTimeout(() => el.remove(),650);
+    placeElement(el, x, y);
+
+    setTimeout(() => el.remove(), 650);
   }
 
   function updateSnake(){
@@ -582,10 +615,12 @@ button:active {
     head.y += (dy / dist) * step;
 
     let angle = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
+
     if(angle > 55) angle = 55;
     if(angle < -55) angle = -55;
 
     const faceSide = dx < 0 ? -1 : 1;
+
     head.el.style.transform =
       `translate3d(-50%,-50%,0) rotate(${angle}deg) scaleX(${faceSide})`;
 
@@ -604,7 +639,7 @@ button:active {
       }
 
       if(cur.type === "tail"){
-        const tailAngle = Math.atan2(dy2,dx2) * 180 / Math.PI;
+        const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
         cur.el.style.transform =
           `translate3d(-50%,-50%,0) rotate(${tailAngle}deg)`;
       } else {
@@ -633,18 +668,20 @@ button:active {
       return;
     }
 
-    if(item && distance(head,item) < 58){
+    if(item && distance(head, item) < 58){
       collectItem();
       return;
     }
 
     for(const bomb of bombs){
-      if(!bomb.safe && distance(head,bomb) < 50){
-        makeExplosion(bomb.x,bomb.y);
+      if(!bomb.safe && distance(head, bomb) < 50){
+        makeExplosion(bomb.x, bomb.y);
+
         if(bomb.el) bomb.el.remove();
 
         playing = false;
-        setTimeout(() => endGame(false),350);
+
+        setTimeout(() => endGame(false), 350);
         return;
       }
     }
@@ -659,8 +696,9 @@ button:active {
     animationId = requestAnimationFrame(loop);
   }
 
-  function movePointer(clientX,clientY){
+  function movePointer(clientX, clientY){
     const rect = areaRect();
+
     targetMouse.x = clientX - rect.left;
     targetMouse.y = clientY - rect.top;
 
@@ -670,18 +708,18 @@ button:active {
 
   root.addEventListener("mousemove", e => {
     if(!playing) return;
-    movePointer(e.clientX,e.clientY);
+    movePointer(e.clientX, e.clientY);
   });
 
   root.addEventListener("touchmove", e => {
     if(!playing) return;
     e.preventDefault();
     const t = e.touches[0];
-    movePointer(t.clientX,t.clientY);
+    movePointer(t.clientX, t.clientY);
   }, { passive:false });
 
-  startBtn.addEventListener("click",startGame);
-  restartBtn.addEventListener("click",startGame);
+  startBtn.addEventListener("click", startGame);
+  restartBtn.addEventListener("click", startGame);
 })();
 </script>
 </body>
