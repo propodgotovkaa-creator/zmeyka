@@ -12,7 +12,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background: #dff6ff;
+  background: #8fdbe8;
 }
 
 #FX_ROOT {
@@ -20,20 +20,39 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,.7), transparent 18%),
-    linear-gradient(135deg, #b8f3d4, #bde7ff);
   user-select: none;
   cursor: default;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255,255,255,.65), transparent 18%),
+    radial-gradient(circle at 80% 75%, rgba(255,255,255,.35), transparent 22%),
+    linear-gradient(135deg, #8ce3d1, #8fcff4);
+}
+
+#FX_ROOT::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .22;
+  background-image:
+    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
+    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
+    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55)),
+    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%, rgba(255,255,255,.55));
+  background-size: 80px 140px;
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+  pointer-events: none;
 }
 
 #gameArea {
   position: absolute;
   inset: 20px;
   border: 6px solid rgba(255,255,255,.9);
-  border-radius: 28px;
-  background: rgba(255,255,255,.35);
-  box-shadow: inset 0 0 30px rgba(0,0,0,.08);
+  border-radius: 30px;
+  background: rgba(255,255,255,.16);
+  box-shadow:
+    inset 0 0 45px rgba(255,255,255,.45),
+    inset 0 0 35px rgba(0,80,120,.12),
+    0 18px 40px rgba(0,80,120,.18);
   overflow: hidden;
 }
 
@@ -43,11 +62,12 @@ html, body {
   left: 22px;
   z-index: 20;
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 900;
   color: #24566b;
-  background: rgba(255,255,255,.8);
+  background: rgba(255,255,255,.86);
   padding: 8px 18px;
   border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
 
 #startScreen, #endScreen {
@@ -57,39 +77,39 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,.75);
+  background: rgba(255,255,255,.72);
   text-align: center;
 }
 
 .panel {
   background: white;
-  border-radius: 28px;
+  border-radius: 30px;
   padding: 34px 42px;
-  box-shadow: 0 14px 40px rgba(0,0,0,.18);
-  max-width: 480px;
+  box-shadow: 0 16px 45px rgba(0,0,0,.22);
+  max-width: 500px;
 }
 
 .panel h1 {
   margin: 0 0 16px;
-  font-size: 38px;
+  font-size: 42px;
   color: #28566c;
 }
 
 .panel p {
-  font-size: 20px;
+  font-size: 21px;
   color: #48616d;
 }
 
 button {
   border: none;
   border-radius: 22px;
-  padding: 16px 32px;
+  padding: 16px 34px;
   font-size: 24px;
-  font-weight: 800;
-  background: #ffce58;
+  font-weight: 900;
+  background: linear-gradient(#ffe27a, #ffbd38);
   color: #5a3b00;
   cursor: pointer;
-  box-shadow: 0 8px 0 #d49b20;
+  box-shadow: 0 8px 0 #d49b20, 0 12px 18px rgba(0,0,0,.18);
 }
 
 button:active {
@@ -97,57 +117,102 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
+/* КРАСИВАЯ 3D-ЗМЕЙКА */
+
 .snake-part {
   position: absolute;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: #5ec96f;
-  box-shadow: inset -5px -5px 0 rgba(0,0,0,.12);
   transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 18%),
+    radial-gradient(circle at 34% 30%, #e46aff 0 18%, #b832f0 46%, #7a19c8 78%, #4f0d91 100%);
+  box-shadow:
+    inset -7px -8px 0 rgba(52,0,96,.22),
+    inset 4px 5px 0 rgba(255,255,255,.22),
+    0 7px 12px rgba(72,0,120,.34);
+}
+
+.snake-part::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  top: 12%;
+  width: 34%;
+  height: 22%;
+  border-radius: 50%;
+  background: rgba(255,255,255,.42);
+  filter: blur(1px);
 }
 
 .snake-head {
-  background: #39b85a;
-  z-index: 10;
+  width: 50px !important;
+  height: 50px !important;
+  z-index: 12;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 19%),
+    radial-gradient(circle at 34% 30%, #ff6cff 0 15%, #c538f4 45%, #851ad1 78%, #5b0c9c 100%);
+  box-shadow:
+    inset -8px -9px 0 rgba(52,0,96,.23),
+    inset 5px 5px 0 rgba(255,255,255,.25),
+    0 9px 16px rgba(72,0,120,.38);
 }
 
 .snake-head::before,
 .snake-head::after {
   content: "";
   position: absolute;
-  top: 8px;
-  width: 6px;
-  height: 6px;
-  background: #123;
+  top: 10px;
+  width: 17px;
+  height: 17px;
+  background:
+    radial-gradient(circle at 62% 58%, #1d2440 0 22%, transparent 24%),
+    radial-gradient(circle at 35% 30%, #ffffff 0 13%, transparent 15%),
+    #fff47a;
+  border: 3px solid rgba(65,32,92,.35);
   border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.25);
 }
 
-.snake-head::before { left: 9px; }
-.snake-head::after { right: 9px; }
+.snake-head::before {
+  left: 4px;
+}
+
+.snake-head::after {
+  right: 4px;
+}
 
 .collect-item {
   position: absolute;
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
   transform: translate(-50%, -50%);
   z-index: 8;
-  font-size: 48px;
+  font-size: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+  animation: floatItem 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes floatItem {
+  from { transform: translate(-50%, -50%) scale(.94); }
+  to { transform: translate(-50%, -58%) scale(1.06); }
 }
 
 .bomb {
   position: absolute;
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   transform: translate(-50%, -50%);
   z-index: 9;
   font-size: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: drop-shadow(0 7px 9px rgba(0,0,0,.28));
 }
 
 .bomb.safe {
@@ -162,7 +227,7 @@ button:active {
 
 .pop {
   position: absolute;
-  font-size: 34px;
+  font-size: 38px;
   pointer-events: none;
   animation: pop .6s ease-out forwards;
   z-index: 30;
@@ -170,19 +235,20 @@ button:active {
 
 @keyframes pop {
   from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
-  to { opacity: 0; transform: translate(-50%, -95%) scale(1.4); }
+  to { opacity: 0; transform: translate(-50%, -95%) scale(1.5); }
 }
 
 #crosshair {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border: 3px solid #28566c;
   border-radius: 50%;
   pointer-events: none;
   z-index: 100;
   display: none;
   transform: translate(-50%, -50%);
+  filter: drop-shadow(0 3px 4px rgba(255,255,255,.8));
 }
 
 #crosshair::before,
@@ -193,16 +259,16 @@ button:active {
 }
 
 #crosshair::before {
-  width: 34px;
+  width: 38px;
   height: 3px;
-  top: 11px;
+  top: 13px;
   left: -7px;
 }
 
 #crosshair::after {
   width: 3px;
-  height: 34px;
-  left: 11px;
+  height: 38px;
+  left: 13px;
   top: -7px;
 }
 </style>
@@ -249,17 +315,17 @@ button:active {
 
   const SETTINGS = {
     targetCount: 10,
-    snakeSpeed: 2.8,
+    snakeSpeed: 3,
     segmentDistance: 18,
-    startLength: 7,
-    growBy: 3,
+    startLength: 13,
+    growBy: 2,
     itemEmoji: "🍎",
     bombEmoji: "💣",
     bombCount: 4,
     bombLifeMs: 10000,
     bombSafeMs: 1000,
     bombRespawnDelayMs: 700,
-    wallPadding: 22
+    wallPadding: 24
   };
 
   let playing = false;
@@ -359,7 +425,7 @@ button:active {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  function safeRandomPoint(margin = 70) {
+  function safeRandomPoint(margin = 80) {
     const rect = areaRect();
     return {
       x: rand(margin, rect.width - margin),
@@ -374,11 +440,11 @@ button:active {
     let tries = 0;
 
     do {
-      pos = safeRandomPoint(80);
+      pos = safeRandomPoint(90);
       tries++;
     } while (
       snake[0] &&
-      distance(pos, snake[0]) < 130 &&
+      distance(pos, snake[0]) < 140 &&
       tries < 40
     );
 
@@ -425,9 +491,10 @@ button:active {
       });
     }
 
-    const newSize = Math.min(54, 34 + collected * 2);
+    const newSize = Math.min(48, 38 + collected * 1.2);
 
-    snake.forEach(part => {
+    snake.forEach((part, index) => {
+      if (index === 0) return;
       part.el.style.width = newSize + "px";
       part.el.style.height = newSize + "px";
     });
@@ -457,11 +524,11 @@ button:active {
     let tries = 0;
 
     do {
-      pos = safeRandomPoint(80);
+      pos = safeRandomPoint(90);
       tries++;
     } while (
       snake[0] &&
-      distance(pos, snake[0]) < 130 &&
+      distance(pos, snake[0]) < 140 &&
       tries < 50
     );
 
@@ -507,6 +574,9 @@ button:active {
     head.x += (dx / len) * SETTINGS.snakeSpeed;
     head.y += (dy / len) * SETTINGS.snakeSpeed;
 
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    head.el.style.transform = "translate(-50%, -50%) rotate(" + angle + "deg)";
+
     for (let i = 1; i < snake.length; i++) {
       const prev = snake[i - 1];
       const cur = snake[i];
@@ -519,6 +589,8 @@ button:active {
         cur.x += (dx2 / d) * (d - SETTINGS.segmentDistance);
         cur.y += (dy2 / d) * (d - SETTINGS.segmentDistance);
       }
+
+      cur.el.style.transform = "translate(-50%, -50%)";
     }
 
     snake.forEach(part => {
@@ -541,13 +613,13 @@ button:active {
       return;
     }
 
-    if (item && distance(head, item) < 42) {
+    if (item && distance(head, item) < 44) {
       collectItem();
       return;
     }
 
     for (const bomb of bombs) {
-      if (!bomb.safe && distance(head, bomb) < 42) {
+      if (!bomb.safe && distance(head, bomb) < 44) {
         makePop(head.x, head.y, "💥");
         endGame(false);
         return;
