@@ -64,6 +64,7 @@ html, body {
   background: rgba(255,255,255,.86);
   padding: 8px 18px;
   border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
 
 #startScreen, #endScreen {
@@ -149,127 +150,33 @@ button:active {
   top: -8px;
 }
 
-/* ТЕЛО */
+/* ГОТОВАЯ SVG-ГУСЕНИЦА */
 
 .snake-part {
   position: absolute;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
   transform: translate(-50%, -50%);
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   z-index: 10;
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 18%),
-    radial-gradient(circle at 34% 30%, #e46aff 0 18%, #b832f0 46%, #7a19c8 78%, #4f0d91 100%);
-  box-shadow:
-    inset -7px -8px 0 rgba(52,0,96,.22),
-    inset 4px 5px 0 rgba(255,255,255,.22),
-    0 7px 12px rgba(72,0,120,.34);
+  filter: drop-shadow(0 10px 10px rgba(54,0,80,.22));
 }
-
-.snake-part::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  top: 12%;
-  width: 34%;
-  height: 22%;
-  border-radius: 50%;
-  background: rgba(255,255,255,.42);
-  filter: blur(1px);
-}
-
-/* МИЛАЯ ГОЛОВА */
 
 .snake-head {
-  width: 58px !important;
-  height: 58px !important;
-  z-index: 15;
-  border-radius: 48% 52% 50% 50%;
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255,255,255,.95) 0 10%, transparent 19%),
-    radial-gradient(circle at 34% 30%, #ff82ff 0 15%, #c93cf3 45%, #871bd1 78%, #5b0c9c 100%);
-  box-shadow:
-    inset -8px -9px 0 rgba(52,0,96,.23),
-    inset 5px 5px 0 rgba(255,255,255,.25),
-    0 9px 16px rgba(72,0,120,.38);
+  width: 86px;
+  height: 86px;
+  z-index: 20;
 }
 
-.snake-face {
-  position: absolute;
-  inset: 0;
+.snake-body {
+  width: 70px;
+  height: 70px;
 }
 
-.eye {
-  position: absolute;
-  top: 9px;
-  width: 17px;
-  height: 21px;
-  background: #fff7a8;
-  border-radius: 50%;
-  border: 3px solid rgba(75,35,100,.32);
-  box-shadow: 0 2px 4px rgba(0,0,0,.22);
-}
-
-.eye.left { left: 8px; }
-.eye.right { right: 8px; }
-
-.eye::after {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 8px;
-  left: 5px;
-  top: 8px;
-  background: #24304a;
-  border-radius: 50%;
-  box-shadow: -2px -2px 0 rgba(255,255,255,.9);
-}
-
-.nose {
-  position: absolute;
-  left: 50%;
-  top: 28px;
-  width: 5px;
-  height: 4px;
-  background: rgba(65,25,90,.45);
-  border-radius: 50%;
-  transform: translateX(-50%);
-}
-
-.cheek {
-  position: absolute;
-  top: 33px;
-  width: 10px;
-  height: 7px;
-  background: rgba(255,170,220,.7);
-  border-radius: 50%;
-  filter: blur(.2px);
-}
-
-.cheek.left { left: 9px; }
-.cheek.right { right: 9px; }
-
-.smile {
-  position: absolute;
-  left: 50%;
-  top: 32px;
-  width: 18px;
-  height: 10px;
-  border-bottom: 3px solid rgba(55,20,75,.65);
-  border-radius: 0 0 20px 20px;
-  transform: translateX(-50%);
-}
-
-.tongue {
-  position: absolute;
-  left: 50%;
-  top: 42px;
-  width: 6px;
-  height: 9px;
-  background: #ff6aa8;
-  border-radius: 0 0 7px 7px;
-  transform: translateX(-50%);
+.snake-tail {
+  width: 62px;
+  height: 62px;
 }
 
 /* ПРЕДМЕТЫ */
@@ -341,7 +248,7 @@ button:active {
 
   <div id="startScreen">
     <div class="panel">
-      <h1>Змейка</h1>
+      <h1>Гусеница</h1>
       <p>Собери 10 картинок и не попади в бомбочки.</p>
       <button id="startBtn">Начать игру</button>
     </div>
@@ -373,16 +280,26 @@ button:active {
   const SETTINGS = {
     targetCount: 10,
     snakeSpeed: 3,
-    segmentDistance: 18,
-    startLength: 13,
+    segmentDistance: 28,
+    startLength: 9,
     growBy: 2,
+
     itemEmoji: "🍎",
     bombEmoji: "💣",
     bombCount: 4,
     bombLifeMs: 10000,
     bombSafeMs: 1000,
     bombRespawnDelayMs: 700,
-    wallPadding: 28
+    wallPadding: 36,
+
+    headImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
+
+    bodyImages: [
+      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-1.svg",
+      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
+    ],
+
+    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg"
   };
 
   let playing = false;
@@ -407,26 +324,25 @@ button:active {
     bombs = [];
     snake = [];
     item = null;
+
     if (animationId) cancelAnimationFrame(animationId);
     if (bombTimer) clearTimeout(bombTimer);
   }
 
-  function createSnakePart(isHead) {
+  function createSnakePart(type, index = 0) {
     const part = document.createElement("div");
-    part.className = "snake-part" + (isHead ? " snake-head" : "");
+    part.classList.add("snake-part");
 
-    if (isHead) {
-      part.innerHTML = `
-        <div class="snake-face">
-          <div class="eye left"></div>
-          <div class="eye right"></div>
-          <div class="nose"></div>
-          <div class="cheek left"></div>
-          <div class="cheek right"></div>
-          <div class="smile"></div>
-          <div class="tongue"></div>
-        </div>
-      `;
+    if (type === "head") {
+      part.classList.add("snake-head");
+      part.style.backgroundImage = `url("${SETTINGS.headImage}")`;
+    } else if (type === "tail") {
+      part.classList.add("snake-tail");
+      part.style.backgroundImage = `url("${SETTINGS.tailImage}")`;
+    } else {
+      part.classList.add("snake-body");
+      const img = SETTINGS.bodyImages[index % SETTINGS.bodyImages.length];
+      part.style.backgroundImage = `url("${img}")`;
     }
 
     area.appendChild(part);
@@ -449,15 +365,22 @@ button:active {
     const startX = rect.width / 2;
     const startY = rect.height / 2;
 
-    mouse.x = startX + 160;
+    mouse.x = startX + 180;
     mouse.y = startY;
 
     for (let i = 0; i < SETTINGS.startLength; i++) {
-      const part = createSnakePart(i === 0);
+      let type = "body";
+
+      if (i === 0) type = "head";
+      else if (i === SETTINGS.startLength - 1) type = "tail";
+
+      const part = createSnakePart(type, i);
+
       snake.push({
         x: startX - i * SETTINGS.segmentDistance,
         y: startY,
-        el: part
+        el: part,
+        type: type
       });
     }
 
@@ -481,7 +404,7 @@ button:active {
       endText.textContent = "Ты собрал все картинки!";
     } else {
       endTitle.textContent = "Попробуй ещё раз!";
-      endText.textContent = "Змейка столкнулась с бомбочкой или краем поля.";
+      endText.textContent = "Гусеница столкнулась с бомбочкой или краем поля.";
     }
   }
 
@@ -511,7 +434,7 @@ button:active {
     let tries = 0;
 
     do {
-      pos = safeRandomPoint(90);
+      pos = safeRandomPoint(95);
       tries++;
     } while (snake[0] && distance(pos, snake[0]) < 150 && tries < 40);
 
@@ -544,24 +467,26 @@ button:active {
   }
 
   function growSnake() {
-    const tail = snake[snake.length - 1];
+    const oldTail = snake[snake.length - 1];
+
+    oldTail.el.classList.remove("snake-tail");
+    oldTail.el.classList.add("snake-body");
+    oldTail.el.style.backgroundImage =
+      `url("${SETTINGS.bodyImages[snake.length % SETTINGS.bodyImages.length]}")`;
+    oldTail.type = "body";
 
     for (let i = 0; i < SETTINGS.growBy; i++) {
-      const part = createSnakePart(false);
+      const isLast = i === SETTINGS.growBy - 1;
+      const type = isLast ? "tail" : "body";
+      const part = createSnakePart(type, snake.length + i);
+
       snake.push({
-        x: tail.x,
-        y: tail.y,
-        el: part
+        x: oldTail.x,
+        y: oldTail.y,
+        el: part,
+        type: type
       });
     }
-
-    const newSize = Math.min(48, 38 + collected * 1.2);
-
-    snake.forEach((part, index) => {
-      if (index === 0) return;
-      part.el.style.width = newSize + "px";
-      part.el.style.height = newSize + "px";
-    });
   }
 
   function spawnBombsCycle() {
@@ -588,7 +513,7 @@ button:active {
     let tries = 0;
 
     do {
-      pos = safeRandomPoint(90);
+      pos = safeRandomPoint(95);
       tries++;
     } while (snake[0] && distance(pos, snake[0]) < 150 && tries < 50);
 
@@ -601,7 +526,7 @@ button:active {
     const bomb = {
       x: pos.x,
       y: pos.y,
-      el,
+      el: el,
       safe: true
     };
 
@@ -635,7 +560,9 @@ button:active {
     head.y += (dy / len) * SETTINGS.snakeSpeed;
 
     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-    head.el.style.transform = "translate(-50%, -50%) rotate(" + angle + "deg)";
+
+    head.el.style.transform =
+      "translate(-50%, -50%) rotate(" + angle + "deg)";
 
     for (let i = 1; i < snake.length; i++) {
       const prev = snake[i - 1];
@@ -650,7 +577,13 @@ button:active {
         cur.y += (dy2 / d) * (d - SETTINGS.segmentDistance);
       }
 
-      cur.el.style.transform = "translate(-50%, -50%)";
+      if (cur.type === "tail") {
+        const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
+        cur.el.style.transform =
+          "translate(-50%, -50%) rotate(" + tailAngle + "deg)";
+      } else {
+        cur.el.style.transform = "translate(-50%, -50%)";
+      }
     }
 
     snake.forEach(part => {
@@ -673,13 +606,13 @@ button:active {
       return;
     }
 
-    if (item && distance(head, item) < 46) {
+    if (item && distance(head, item) < 48) {
       collectItem();
       return;
     }
 
     for (const bomb of bombs) {
-      if (!bomb.safe && distance(head, bomb) < 46) {
+      if (!bomb.safe && distance(head, bomb) < 48) {
         makePop(head.x, head.y, "💥");
         endGame(false);
         return;
