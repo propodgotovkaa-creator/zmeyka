@@ -28,28 +28,13 @@ html, body {
     linear-gradient(135deg, #8ce3d1, #8fcff4);
 }
 
-#FX_ROOT::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: .22;
-  background-image:
-    linear-gradient(30deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%),
-    linear-gradient(150deg, rgba(255,255,255,.55) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.55) 87.5%);
-  background-size: 80px 140px;
-  pointer-events: none;
-}
-
 #gameArea {
   position: absolute;
   inset: 20px;
   border: 6px solid rgba(255,255,255,.9);
   border-radius: 30px;
   background: rgba(255,255,255,.16);
-  box-shadow:
-    inset 0 0 45px rgba(255,255,255,.45),
-    inset 0 0 35px rgba(0,80,120,.12),
-    0 18px 40px rgba(0,80,120,.18);
+  box-shadow: inset 0 0 45px rgba(255,255,255,.45), 0 18px 40px rgba(0,80,120,.18);
   overflow: hidden;
 }
 
@@ -64,7 +49,6 @@ html, body {
   background: rgba(255,255,255,.86);
   padding: 8px 18px;
   border-radius: 20px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
 
 #startScreen, #endScreen {
@@ -114,8 +98,6 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
-/* МЯГКИЙ КУРСОР */
-
 #crosshair {
   position: absolute;
   width: 18px;
@@ -144,8 +126,6 @@ button:active {
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
-
-/* SVG-ГУСЕНИЦА */
 
 .snake-part {
   position: absolute;
@@ -176,8 +156,6 @@ button:active {
   height: 62px;
 }
 
-/* ПРЕДМЕТ */
-
 .collect-item {
   position: absolute;
   width: 58px;
@@ -196,8 +174,6 @@ button:active {
   from { transform: translate(-50%, -50%) scale(.94); }
   to { transform: translate(-50%, -58%) scale(1.06); }
 }
-
-/* SVG-БОМБА */
 
 .bomb {
   position: absolute;
@@ -226,8 +202,6 @@ button:active {
   from { opacity: .25; transform: translate(-50%, -50%) scale(.9); }
   to { opacity: .85; transform: translate(-50%, -50%) scale(1.06); }
 }
-
-/* ВЗРЫВ */
 
 .explosion {
   position: absolute;
@@ -309,10 +283,12 @@ button:active {
 
   const SETTINGS = {
     targetCount: 10,
-    snakeSpeed: 2.35,
-    segmentDistance: 22,
+    snakeSpeed: 2.1,
+    segmentDistance: 24,
     startLength: 8,
     growBy: 1,
+    pointerSmooth: 0.08,
+    bodyFollow: 0.32,
 
     itemEmoji: "🍎",
     bombCount: 4,
@@ -337,6 +313,7 @@ button:active {
   let playing = false;
   let collected = 0;
   let mouse = { x: 300, y: 300 };
+  let targetMouse = { x: 300, y: 300 };
   let snake = [];
   let item = null;
   let bombs = [];
@@ -399,6 +376,8 @@ button:active {
 
     mouse.x = startX + 180;
     mouse.y = startY;
+    targetMouse.x = mouse.x;
+    targetMouse.y = mouse.y;
 
     for (let i = 0; i < SETTINGS.startLength; i++) {
       let type = "body";
@@ -522,7 +501,10 @@ button:active {
   }
 
   function spawnBombsCycle() {
-    bombs.forEach(b => b.el.remove());
+    bombs.forEach(b => {
+      if (b.el) b.el.remove();
+    });
+
     bombs = [];
 
     for (let i = 0; i < SETTINGS.bombCount; i++) {
@@ -530,7 +512,13 @@ button:active {
     }
 
     bombTimer = setTimeout(() => {
-      bombs.forEach(b => b.el.remove());
+      bombs.forEach(b => {
+        if (b.el) {
+          makeExplosion(b.x, b.y);
+          b.el.remove();
+        }
+      });
+
       bombs = [];
 
       bombTimer = setTimeout(() => {
@@ -592,13 +580,19 @@ button:active {
   }
 
   function updateSnake() {
+    mouse.x += (targetMouse.x - mouse.x) * SETTINGS.pointerSmooth;
+    mouse.y += (targetMouse.y - mouse.y) * SETTINGS.pointerSmooth;
+
     const head = snake[0];
 
     const dx = mouse.x - head.x;
     const dy = mouse.y - head.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-    head.x += dx * 0.045;
-    head.y += dy * 0.045;
+    const step = Math.min(SETTINGS.snakeSpeed, dist);
+
+    head.x += (dx / dist) * step;
+    head.y += (dy / dist) * step;
 
     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
@@ -613,16 +607,16 @@ button:active {
       const dy2 = prev.y - cur.y;
       const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
 
-      const targetDistance = SETTINGS.segmentDistance;
+      if (d > SETTINGS.segmentDistance) {
+        const move = (d - SETTINGS.segmentDistance) * SETTINGS.bodyFollow;
 
-      if (d > targetDistance) {
-        const move = (d - targetDistance) * 0.42;
         cur.x += (dx2 / d) * move;
         cur.y += (dy2 / d) * move;
       }
 
       if (cur.type === "tail") {
         const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
+
         cur.el.style.transform =
           "translate3d(-50%, -50%, 0) rotate(" + tailAngle + "deg)";
       } else {
@@ -685,8 +679,8 @@ button:active {
   function movePointer(clientX, clientY) {
     const rect = areaRect();
 
-    mouse.x = clientX - rect.left;
-    mouse.y = clientY - rect.top;
+    targetMouse.x = clientX - rect.left;
+    targetMouse.y = clientY - rect.top;
 
     crosshair.style.left = clientX + "px";
     crosshair.style.top = clientY + "px";
