@@ -12,7 +12,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  background: #8fdbe8;
+  background: radial-gradient(circle at top, #7de0c0, #5ab7d4 70%);
 }
 
 #FX_ROOT {
@@ -22,38 +22,6 @@ html, body {
   overflow: hidden;
   user-select: none;
   cursor: default;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(255,255,255,.55), transparent 34%),
-    radial-gradient(circle at 18% 18%, rgba(255,255,255,.35), transparent 18%),
-    radial-gradient(circle at 85% 80%, rgba(104,190,118,.35), transparent 24%),
-    linear-gradient(135deg, #a9eec1, #7fd8b0 45%, #7bc7e8);
-}
-
-#FX_ROOT::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: .28;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,.9) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(255,244,170,.75) 0 1.5px, transparent 3px);
-  background-size: 90px 90px, 130px 130px;
-  animation: sparkleDrift 18s linear infinite;
-}
-
-@keyframes sparkleDrift {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 120px 90px, -90px 130px; }
-}
-
-#FX_ROOT::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 50%, transparent 48%, rgba(25,90,60,.22) 100%);
 }
 
 #gameArea {
@@ -61,56 +29,32 @@ html, body {
   inset: 24px;
   border-radius: 34px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(255,255,255,.55), transparent 34%),
-    radial-gradient(circle at 35% 35%, rgba(255,255,210,.32), transparent 22%),
-    radial-gradient(circle at 75% 70%, rgba(85,180,110,.18), transparent 28%),
-    linear-gradient(135deg, #bdf7aa, #91e590 48%, #7bdc9c);
-  border: 10px solid rgba(255,255,255,.85);
+  background-image: url("https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/main/assets/game-background.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   box-shadow:
-    inset 0 0 45px rgba(255,255,255,.55),
-    inset 0 0 80px rgba(44,120,62,.22),
-    0 18px 45px rgba(35,105,80,.28);
-}
-
-#gameArea::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: 24px;
-  background:
-    linear-gradient(90deg, rgba(50,150,65,.32), transparent 12%, transparent 88%, rgba(50,150,65,.32)),
-    linear-gradient(0deg, rgba(50,150,65,.32), transparent 12%, transparent 88%, rgba(50,150,65,.32));
-  z-index: 1;
-}
-
-#gameArea::after {
-  content: "🌿 🌸 🍄 🌼 🌿      🌱 🌷 🍃     🍄 🌸 🌿";
-  position: absolute;
-  inset: 10px;
-  pointer-events: none;
-  z-index: 2;
-  font-size: 30px;
-  letter-spacing: 18px;
-  line-height: 1.4;
-  color: rgba(255,255,255,.9);
-  text-shadow: 0 4px 8px rgba(0,0,0,.16);
-  opacity: .8;
+    0 18px 45px rgba(0,0,0,.28),
+    inset 0 0 25px rgba(255,255,255,.18);
+  border: 8px solid rgba(255,255,255,.15);
 }
 
 #score {
   position: absolute;
-  top: 18px;
-  left: 22px;
-  z-index: 30;
-  font-size: 26px;
+  top: 30px;
+  left: 38px;
+  z-index: 35;
+  font-size: 34px;
   font-weight: 900;
-  color: #24566b;
-  background: rgba(255,255,255,.88);
-  padding: 8px 18px;
-  border-radius: 20px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+  color: white;
+  background: linear-gradient(#ff69c8, #d91f91);
+  padding: 16px 42px;
+  border-radius: 34px;
+  border: 5px solid rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 5px 0 rgba(255,255,255,.35),
+    0 8px 18px rgba(0,0,0,.22);
+  text-shadow: 0 3px 0 rgba(65,20,120,.55);
 }
 
 #startScreen, #endScreen {
@@ -202,21 +146,9 @@ button:active {
   filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
 }
 
-.snake-head {
-  width: 86px;
-  height: 86px;
-  z-index: 20;
-}
-
-.snake-body {
-  width: 70px;
-  height: 70px;
-}
-
-.snake-tail {
-  width: 62px;
-  height: 62px;
-}
+.snake-head { width: 86px; height: 86px; z-index: 20; }
+.snake-body { width: 70px; height: 70px; }
+.snake-tail { width: 62px; height: 62px; }
 
 .collect-item {
   position: absolute;
@@ -322,93 +254,105 @@ button:active {
 
 <script>
 (function(){
-  const root=document.getElementById("FX_ROOT");
-  const area=document.getElementById("gameArea");
-  const scoreEl=document.getElementById("score");
-  const startScreen=document.getElementById("startScreen");
-  const endScreen=document.getElementById("endScreen");
-  const startBtn=document.getElementById("startBtn");
-  const restartBtn=document.getElementById("restartBtn");
-  const endTitle=document.getElementById("endTitle");
-  const endText=document.getElementById("endText");
-  const crosshair=document.getElementById("crosshair");
+  const root = document.getElementById("FX_ROOT");
+  const area = document.getElementById("gameArea");
+  const scoreEl = document.getElementById("score");
+  const startScreen = document.getElementById("startScreen");
+  const endScreen = document.getElementById("endScreen");
+  const startBtn = document.getElementById("startBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const endTitle = document.getElementById("endTitle");
+  const endText = document.getElementById("endText");
+  const crosshair = document.getElementById("crosshair");
 
-  const SETTINGS={
-    targetCount:10,
-    snakeSpeed:3,
-    segmentDistance:24,
-    startLength:8,
-    growBy:1,
-    pointerSmooth:.1,
-    bodyFollow:.32,
+  const SETTINGS = {
+    targetCount: 10,
+    snakeSpeed: 3,
+    segmentDistance: 24,
+    startLength: 8,
+    growBy: 1,
+    pointerSmooth: .1,
+    bodyFollow: .32,
 
-    bombCount:4,
-    bombLifeMs:10000,
-    bombSafeMs:1000,
-    bombRespawnDelayMs:700,
-    wallPadding:36,
+    bombBaseCount: 4,
+    bombMaxCount: 6,
+    bombLifeMs: 10000,
+    bombSafeMs: 1000,
+    bombRespawnDelayMs: 700,
+    wallPadding: 78,
 
-    itemImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png",
+    itemImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png",
 
-    headImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
-    bodyImages:[
+    headImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
+    bodyImages: [
       "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-1.svg",
       "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
     ],
-    tailImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
-    bombImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
-    explosionImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
+    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
+    bombImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
+    explosionImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
   };
 
-  let playing=false;
-  let collected=0;
-  let mouse={x:300,y:300};
-  let targetMouse={x:300,y:300};
-  let snake=[];
-  let item=null;
-  let bombs=[];
-  let animationId=null;
-  let bombTimer=null;
+  let playing = false;
+  let collected = 0;
+  let mouse = { x: 300, y: 300 };
+  let targetMouse = { x: 300, y: 300 };
+  let snake = [];
+  let item = null;
+  let bombs = [];
+  let animationId = null;
+  let bombTimer = null;
 
   function areaRect(){ return area.getBoundingClientRect(); }
-  function rand(min,max){ return Math.random()*(max-min)+min; }
+  function rand(min,max){ return Math.random() * (max - min) + min; }
+
   function distance(a,b){
-    const dx=a.x-b.x, dy=a.y-b.y;
-    return Math.sqrt(dx*dx+dy*dy);
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
   }
+
   function placeElement(el,x,y){
-    el.style.left=x+"px";
-    el.style.top=y+"px";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+  }
+
+  function currentBombCount(){
+    if (collected >= 7) return SETTINGS.bombMaxCount;
+    if (collected >= 4) return SETTINGS.bombBaseCount + 1;
+    return SETTINGS.bombBaseCount;
   }
 
   function clearGame(){
-    area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el=>el.remove());
-    bombs=[]; snake=[]; item=null;
+    area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el => el.remove());
+    bombs = [];
+    snake = [];
+    item = null;
     if(animationId) cancelAnimationFrame(animationId);
     if(bombTimer) clearTimeout(bombTimer);
   }
 
-  function safeRandomPoint(margin=110){
-    const rect=areaRect();
+  function safeRandomPoint(margin = 130){
+    const rect = areaRect();
     return {
-      x:rand(margin, rect.width-margin),
-      y:rand(margin, rect.height-margin)
+      x: rand(margin, rect.width - margin),
+      y: rand(margin, rect.height - margin)
     };
   }
 
-  function createSnakePart(type,index=0){
-    const part=document.createElement("div");
+  function createSnakePart(type,index = 0){
+    const part = document.createElement("div");
     part.classList.add("snake-part");
 
-    if(type==="head"){
+    if(type === "head"){
       part.classList.add("snake-head");
-      part.style.backgroundImage=`url("${SETTINGS.headImage}")`;
-    }else if(type==="tail"){
+      part.style.backgroundImage = `url("${SETTINGS.headImage}")`;
+    } else if(type === "tail"){
       part.classList.add("snake-tail");
-      part.style.backgroundImage=`url("${SETTINGS.tailImage}")`;
-    }else{
+      part.style.backgroundImage = `url("${SETTINGS.tailImage}")`;
+    } else {
       part.classList.add("snake-body");
-      part.style.backgroundImage=`url("${SETTINGS.bodyImages[index%SETTINGS.bodyImages.length]}")`;
+      part.style.backgroundImage = `url("${SETTINGS.bodyImages[index % SETTINGS.bodyImages.length]}")`;
     }
 
     area.appendChild(part);
@@ -418,31 +362,36 @@ button:active {
   function startGame(){
     clearGame();
 
-    playing=true;
-    collected=0;
-    scoreEl.textContent="0 / "+SETTINGS.targetCount;
+    playing = true;
+    collected = 0;
+    scoreEl.textContent = "0 / " + SETTINGS.targetCount;
 
-    startScreen.style.display="none";
-    endScreen.style.display="none";
-    crosshair.style.display="block";
-    root.style.cursor="none";
+    startScreen.style.display = "none";
+    endScreen.style.display = "none";
+    crosshair.style.display = "block";
+    root.style.cursor = "none";
 
-    const rect=areaRect();
-    const startX=rect.width/2;
-    const startY=rect.height/2;
+    const rect = areaRect();
+    const startX = rect.width / 2;
+    const startY = rect.height / 2;
 
-    mouse.x=startX+180;
-    mouse.y=startY;
-    targetMouse.x=mouse.x;
-    targetMouse.y=mouse.y;
+    mouse.x = startX + 180;
+    mouse.y = startY;
+    targetMouse.x = mouse.x;
+    targetMouse.y = mouse.y;
 
-    for(let i=0;i<SETTINGS.startLength;i++){
-      let type="body";
-      if(i===0) type="head";
-      else if(i===SETTINGS.startLength-1) type="tail";
+    for(let i = 0; i < SETTINGS.startLength; i++){
+      let type = "body";
+      if(i === 0) type = "head";
+      else if(i === SETTINGS.startLength - 1) type = "tail";
 
-      const part=createSnakePart(type,i);
-      snake.push({x:startX-i*SETTINGS.segmentDistance,y:startY,el:part,type});
+      const part = createSnakePart(type,i);
+      snake.push({
+        x: startX - i * SETTINGS.segmentDistance,
+        y: startY,
+        el: part,
+        type
+      });
     }
 
     spawnItem();
@@ -451,58 +400,60 @@ button:active {
   }
 
   function endGame(win){
-    playing=false;
+    playing = false;
+
     if(animationId) cancelAnimationFrame(animationId);
     if(bombTimer) clearTimeout(bombTimer);
 
-    crosshair.style.display="none";
-    root.style.cursor="default";
-    endScreen.style.display="flex";
+    crosshair.style.display = "none";
+    root.style.cursor = "default";
+    endScreen.style.display = "flex";
 
     if(win){
-      endTitle.textContent="Победа!";
-      endText.textContent="Ты собрал все картинки!";
-    }else{
-      endTitle.textContent="Попробуй ещё раз!";
-      endText.textContent="Гусеница столкнулась с бомбочкой или краем поля.";
+      endTitle.textContent = "Победа!";
+      endText.textContent = "Ты собрал все картинки!";
+    } else {
+      endTitle.textContent = "Попробуй ещё раз!";
+      endText.textContent = "Гусеница столкнулась с бомбочкой или краем поля.";
     }
   }
 
   function spawnItem(){
     if(item && item.el) item.el.remove();
 
-    let pos, tries=0;
-    do{
-      pos=safeRandomPoint(120);
+    let pos, tries = 0;
+
+    do {
+      pos = safeRandomPoint(145);
       tries++;
-    }while(
+    } while (
       (
-        (snake[0] && distance(pos,snake[0])<170) ||
-        bombs.some(b=>distance(pos,b)<160)
-      ) && tries<80
+        (snake[0] && distance(pos,snake[0]) < 180) ||
+        bombs.some(b => distance(pos,b) < 175)
+      ) && tries < 100
     );
 
-    const el=document.createElement("div");
-    el.className="collect-item";
-    el.style.backgroundImage=`url("${SETTINGS.itemImage}")`;
+    const el = document.createElement("div");
+    el.className = "collect-item";
+    el.style.backgroundImage = `url("${SETTINGS.itemImage}")`;
     area.appendChild(el);
 
-    item={x:pos.x,y:pos.y,el};
+    item = { x: pos.x, y: pos.y, el };
     placeElement(el,pos.x,pos.y);
   }
 
   function collectItem(){
     collected++;
-    scoreEl.textContent=collected+" / "+SETTINGS.targetCount;
+    scoreEl.textContent = collected + " / " + SETTINGS.targetCount;
 
     makePop(item.x,item.y,"✨");
 
     if(item && item.el) item.el.remove();
-    item=null;
+    item = null;
 
     growSnake();
 
-    if(collected>=SETTINGS.targetCount){
+    if(collected >= SETTINGS.targetCount){
       endGame(true);
       return;
     }
@@ -511,167 +462,182 @@ button:active {
   }
 
   function growSnake(){
-    const oldTail=snake[snake.length-1];
+    const oldTail = snake[snake.length - 1];
 
     oldTail.el.classList.remove("snake-tail");
     oldTail.el.classList.add("snake-body");
-    oldTail.el.style.backgroundImage=`url("${SETTINGS.bodyImages[snake.length%SETTINGS.bodyImages.length]}")`;
-    oldTail.type="body";
+    oldTail.el.style.backgroundImage =
+      `url("${SETTINGS.bodyImages[snake.length % SETTINGS.bodyImages.length]}")`;
+    oldTail.type = "body";
 
-    for(let i=0;i<SETTINGS.growBy;i++){
-      const isLast=i===SETTINGS.growBy-1;
-      const type=isLast ? "tail" : "body";
-      const part=createSnakePart(type,snake.length+i);
+    for(let i = 0; i < SETTINGS.growBy; i++){
+      const isLast = i === SETTINGS.growBy - 1;
+      const type = isLast ? "tail" : "body";
+      const part = createSnakePart(type, snake.length + i);
 
-      snake.push({x:oldTail.x,y:oldTail.y,el:part,type});
+      snake.push({
+        x: oldTail.x,
+        y: oldTail.y,
+        el: part,
+        type
+      });
     }
   }
 
   function spawnBombsCycle(){
-    bombs.forEach(b=>{
+    bombs.forEach(b => {
       if(b.el) b.el.remove();
     });
-    bombs=[];
+    bombs = [];
 
-    for(let i=0;i<SETTINGS.bombCount;i++){
+    const count = currentBombCount();
+
+    for(let i = 0; i < count; i++){
       spawnBomb();
     }
 
-    bombTimer=setTimeout(()=>{
-      bombs.forEach(b=>{
+    bombTimer = setTimeout(() => {
+      bombs.forEach(b => {
         if(b.el){
           makeExplosion(b.x,b.y);
           b.el.remove();
         }
       });
 
-      bombs=[];
+      bombs = [];
 
-      bombTimer=setTimeout(()=>{
+      bombTimer = setTimeout(() => {
         if(playing) spawnBombsCycle();
-      },SETTINGS.bombRespawnDelayMs);
+      }, SETTINGS.bombRespawnDelayMs);
 
-    },SETTINGS.bombLifeMs);
+    }, SETTINGS.bombLifeMs);
   }
 
   function spawnBomb(){
-    let pos, tries=0;
+    let pos, tries = 0;
 
-    do{
-      pos=safeRandomPoint(120);
+    do {
+      pos = safeRandomPoint(145);
       tries++;
-    }while(
+    } while (
       (
-        (snake[0] && distance(pos,snake[0])<190) ||
-        (item && distance(pos,item)<180) ||
-        bombs.some(b=>distance(pos,b)<170)
-      ) && tries<120
+        (snake[0] && distance(pos,snake[0]) < 200) ||
+        (item && distance(pos,item) < 190) ||
+        bombs.some(b => distance(pos,b) < 185)
+      ) && tries < 150
     );
 
-    const el=document.createElement("div");
-    el.className="bomb safe";
-    el.style.backgroundImage=`url("${SETTINGS.bombImage}")`;
+    const el = document.createElement("div");
+    el.className = "bomb safe";
+    el.style.backgroundImage = `url("${SETTINGS.bombImage}")`;
     area.appendChild(el);
     placeElement(el,pos.x,pos.y);
 
-    const bomb={x:pos.x,y:pos.y,el,safe:true};
+    const bomb = { x: pos.x, y: pos.y, el, safe: true };
     bombs.push(bomb);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       if(!playing || !bomb.el) return;
-      bomb.safe=false;
+      bomb.safe = false;
       bomb.el.classList.remove("safe");
-    },SETTINGS.bombSafeMs);
+    }, SETTINGS.bombSafeMs);
   }
 
   function makeExplosion(x,y){
-    const el=document.createElement("div");
-    el.className="explosion";
-    el.style.backgroundImage=`url("${SETTINGS.explosionImage}")`;
+    const el = document.createElement("div");
+    el.className = "explosion";
+    el.style.backgroundImage = `url("${SETTINGS.explosionImage}")`;
     area.appendChild(el);
     placeElement(el,x,y);
-    setTimeout(()=>el.remove(),500);
+    setTimeout(() => el.remove(),500);
   }
 
   function makePop(x,y,text){
-    const el=document.createElement("div");
-    el.className="pop";
-    el.textContent=text;
+    const el = document.createElement("div");
+    el.className = "pop";
+    el.textContent = text;
     area.appendChild(el);
     placeElement(el,x,y);
-    setTimeout(()=>el.remove(),650);
+    setTimeout(() => el.remove(),650);
   }
 
   function updateSnake(){
-    mouse.x+=(targetMouse.x-mouse.x)*SETTINGS.pointerSmooth;
-    mouse.y+=(targetMouse.y-mouse.y)*SETTINGS.pointerSmooth;
+    mouse.x += (targetMouse.x - mouse.x) * SETTINGS.pointerSmooth;
+    mouse.y += (targetMouse.y - mouse.y) * SETTINGS.pointerSmooth;
 
-    const head=snake[0];
-    const dx=mouse.x-head.x;
-    const dy=mouse.y-head.y;
-    const dist=Math.sqrt(dx*dx+dy*dy)||1;
-    const step=Math.min(SETTINGS.snakeSpeed,dist);
+    const head = snake[0];
+    const dx = mouse.x - head.x;
+    const dy = mouse.y - head.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const step = Math.min(SETTINGS.snakeSpeed, dist);
 
-    head.x+=(dx/dist)*step;
-    head.y+=(dy/dist)*step;
+    head.x += (dx / dist) * step;
+    head.y += (dy / dist) * step;
 
-    let angle=Math.atan2(dy,Math.abs(dx))*180/Math.PI;
-    if(angle>55) angle=55;
-    if(angle<-55) angle=-55;
+    let angle = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
+    if(angle > 55) angle = 55;
+    if(angle < -55) angle = -55;
 
-    const faceSide=dx<0 ? -1 : 1;
-    head.el.style.transform=`translate3d(-50%,-50%,0) rotate(${angle}deg) scaleX(${faceSide})`;
+    const faceSide = dx < 0 ? -1 : 1;
+    head.el.style.transform =
+      `translate3d(-50%,-50%,0) rotate(${angle}deg) scaleX(${faceSide})`;
 
-    for(let i=1;i<snake.length;i++){
-      const prev=snake[i-1];
-      const cur=snake[i];
+    for(let i = 1; i < snake.length; i++){
+      const prev = snake[i - 1];
+      const cur = snake[i];
 
-      const dx2=prev.x-cur.x;
-      const dy2=prev.y-cur.y;
-      const d=Math.sqrt(dx2*dx2+dy2*dy2)||1;
+      const dx2 = prev.x - cur.x;
+      const dy2 = prev.y - cur.y;
+      const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
 
-      if(d>SETTINGS.segmentDistance){
-        const move=(d-SETTINGS.segmentDistance)*SETTINGS.bodyFollow;
-        cur.x+=(dx2/d)*move;
-        cur.y+=(dy2/d)*move;
+      if(d > SETTINGS.segmentDistance){
+        const move = (d - SETTINGS.segmentDistance) * SETTINGS.bodyFollow;
+        cur.x += (dx2 / d) * move;
+        cur.y += (dy2 / d) * move;
       }
 
-      if(cur.type==="tail"){
-        const tailAngle=Math.atan2(dy2,dx2)*180/Math.PI;
-        cur.el.style.transform=`translate3d(-50%,-50%,0) rotate(${tailAngle}deg)`;
-      }else{
-        cur.el.style.transform="translate3d(-50%,-50%,0)";
+      if(cur.type === "tail"){
+        const tailAngle = Math.atan2(dy2,dx2) * 180 / Math.PI;
+        cur.el.style.transform =
+          `translate3d(-50%,-50%,0) rotate(${tailAngle}deg)`;
+      } else {
+        cur.el.style.transform = "translate3d(-50%,-50%,0)";
       }
     }
 
-    snake.forEach(part=>{
-      part.el.style.left=part.x+"px";
-      part.el.style.top=part.y+"px";
+    snake.forEach(part => {
+      part.el.style.left = part.x + "px";
+      part.el.style.top = part.y + "px";
     });
   }
 
   function checkCollisions(){
-    const rect=areaRect();
-    const head=snake[0];
-    const pad=SETTINGS.wallPadding;
+    const rect = areaRect();
+    const head = snake[0];
+    const pad = SETTINGS.wallPadding;
 
-    if(head.x<pad || head.y<pad || head.x>rect.width-pad || head.y>rect.height-pad){
+    if(
+      head.x < pad ||
+      head.y < pad ||
+      head.x > rect.width - pad ||
+      head.y > rect.height - pad
+    ){
       endGame(false);
       return;
     }
 
-    if(item && distance(head,item)<58){
+    if(item && distance(head,item) < 58){
       collectItem();
       return;
     }
 
     for(const bomb of bombs){
-      if(!bomb.safe && distance(head,bomb)<50){
+      if(!bomb.safe && distance(head,bomb) < 50){
         makeExplosion(bomb.x,bomb.y);
         if(bomb.el) bomb.el.remove();
 
-        playing=false;
-        setTimeout(()=>endGame(false),350);
+        playing = false;
+        setTimeout(() => endGame(false),350);
         return;
       }
     }
@@ -679,31 +645,33 @@ button:active {
 
   function loop(){
     if(!playing) return;
+
     updateSnake();
     checkCollisions();
-    animationId=requestAnimationFrame(loop);
+
+    animationId = requestAnimationFrame(loop);
   }
 
   function movePointer(clientX,clientY){
-    const rect=areaRect();
-    targetMouse.x=clientX-rect.left;
-    targetMouse.y=clientY-rect.top;
+    const rect = areaRect();
+    targetMouse.x = clientX - rect.left;
+    targetMouse.y = clientY - rect.top;
 
-    crosshair.style.left=clientX+"px";
-    crosshair.style.top=clientY+"px";
+    crosshair.style.left = clientX + "px";
+    crosshair.style.top = clientY + "px";
   }
 
-  root.addEventListener("mousemove",e=>{
+  root.addEventListener("mousemove", e => {
     if(!playing) return;
     movePointer(e.clientX,e.clientY);
   });
 
-  root.addEventListener("touchmove",e=>{
+  root.addEventListener("touchmove", e => {
     if(!playing) return;
     e.preventDefault();
-    const t=e.touches[0];
+    const t = e.touches[0];
     movePointer(t.clientX,t.clientY);
-  },{passive:false});
+  }, { passive:false });
 
   startBtn.addEventListener("click",startGame);
   restartBtn.addEventListener("click",startGame);
