@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="boomCore" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#fff8bf"/>
+      <stop offset="28%" stop-color="#ffe05f"/>
+      <stop offset="58%" stop-color="#ff8b1f"/>
+      <stop offset="100%" stop-color="#ff2d55"/>
+    </radialGradient>
+
+    <radialGradient id="smoke" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#79839a"/>
+      <stop offset="100%" stop-color="#2a3040"/>
+    </radialGradient>
+
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- smoke clouds -->
+  <circle cx="150" cy="315" r="52" fill="url(#smoke)" opacity=".82"/>
+  <circle cx="355" cy="330" r="58" fill="url(#smoke)" opacity=".82"/>
+  <circle cx="248" cy="390" r="62" fill="url(#smoke)" opacity=".78"/>
+
+  <!-- explosion -->
+  <g filter="url(#glow)">
+    <path d="M256 40
+             L302 142
+             L415 92
+             L368 205
+             L480 256
+             L368 307
+             L415 420
+             L302 370
+             L256 472
+             L210 370
+             L97 420
+             L144 307
+             L32 256
+             L144 205
+             L97 92
+             L210 142Z"
+          fill="url(#boomCore)"/>
+  </g>
+
+  <!-- inner light -->
+  <circle cx="256" cy="256" r="88" fill="#fff4a8" opacity=".95"/>
+  <circle cx="256" cy="256" r="46" fill="#ffffff" opacity=".88"/>
+
+  <!-- sparks -->
+  <circle cx="118" cy="148" r="12" fill="#ffe86b"/>
+  <circle cx="420" cy="132" r="9" fill="#ffcc49"/>
+  <circle cx="396" cy="392" r="11" fill="#ffe86b"/>
+  <circle cx="108" cy="366" r="8" fill="#ffb629"/>
+  <circle cx="454" cy="250" r="10" fill="#fff29f"/>
+</svg>
