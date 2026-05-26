@@ -114,7 +114,7 @@ button:active {
   box-shadow: 0 4px 0 #d49b20;
 }
 
-/* МЯГКИЙ КРАСИВЫЙ КУРСОР */
+/* МЯГКИЙ КУРСОР */
 
 #crosshair {
   position: absolute;
@@ -143,7 +143,6 @@ button:active {
   background: rgba(40,86,108,.75);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 8px rgba(255,255,255,.9);
 }
 
 /* SVG-ГУСЕНИЦА */
@@ -177,7 +176,7 @@ button:active {
   height: 62px;
 }
 
-/* ПРЕДМЕТЫ */
+/* ПРЕДМЕТ */
 
 .collect-item {
   position: absolute;
@@ -198,27 +197,60 @@ button:active {
   to { transform: translate(-50%, -58%) scale(1.06); }
 }
 
+/* SVG-БОМБА */
+
 .bomb {
   position: absolute;
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   transform: translate(-50%, -50%);
   z-index: 9;
-  font-size: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 7px 9px rgba(0,0,0,.28));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,.35));
+  animation: bombFloat 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes bombFloat {
+  from { transform: translate(-50%, -50%) scale(.96) rotate(-2deg); }
+  to { transform: translate(-50%, -56%) scale(1.04) rotate(2deg); }
 }
 
 .bomb.safe {
-  animation: blink .18s infinite alternate;
+  animation: bombSafe .18s infinite alternate;
   opacity: .45;
 }
 
-@keyframes blink {
+@keyframes bombSafe {
   from { opacity: .25; transform: translate(-50%, -50%) scale(.9); }
-  to { opacity: .85; transform: translate(-50%, -50%) scale(1.08); }
+  to { opacity: .85; transform: translate(-50%, -50%) scale(1.06); }
+}
+
+/* ВЗРЫВ */
+
+.explosion {
+  position: absolute;
+  width: 135px;
+  height: 135px;
+  transform: translate(-50%, -50%) scale(.35);
+  z-index: 40;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  animation: boom .45s ease-out forwards;
+}
+
+@keyframes boom {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(.35);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.45);
+  }
 }
 
 .pop {
@@ -283,7 +315,6 @@ button:active {
     growBy: 1,
 
     itemEmoji: "🍎",
-    bombEmoji: "💣",
     bombCount: 4,
     bombLifeMs: 10000,
     bombSafeMs: 1000,
@@ -297,7 +328,10 @@ button:active {
       "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
     ],
 
-    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg"
+    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
+
+    bombImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
+    explosionImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
   };
 
   let playing = false;
@@ -318,7 +352,7 @@ button:active {
   }
 
   function clearGame() {
-    area.querySelectorAll(".snake-part, .collect-item, .bomb, .pop").forEach(el => el.remove());
+    area.querySelectorAll(".snake-part, .collect-item, .bomb, .pop, .explosion").forEach(el => el.remove());
     bombs = [];
     snake = [];
     item = null;
@@ -417,7 +451,7 @@ button:active {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  function safeRandomPoint(margin = 90) {
+  function safeRandomPoint(margin = 95) {
     const rect = areaRect();
     return {
       x: rand(margin, rect.width - margin),
@@ -511,13 +545,13 @@ button:active {
     let tries = 0;
 
     do {
-      pos = safeRandomPoint(95);
+      pos = safeRandomPoint(100);
       tries++;
-    } while (snake[0] && distance(pos, snake[0]) < 150 && tries < 50);
+    } while (snake[0] && distance(pos, snake[0]) < 170 && tries < 50);
 
     const el = document.createElement("div");
     el.className = "bomb safe";
-    el.textContent = SETTINGS.bombEmoji;
+    el.style.backgroundImage = `url("${SETTINGS.bombImage}")`;
     area.appendChild(el);
     placeElement(el, pos.x, pos.y);
 
@@ -535,6 +569,16 @@ button:active {
       bomb.safe = false;
       bomb.el.classList.remove("safe");
     }, SETTINGS.bombSafeMs);
+  }
+
+  function makeExplosion(x, y) {
+    const el = document.createElement("div");
+    el.className = "explosion";
+    el.style.backgroundImage = `url("${SETTINGS.explosionImage}")`;
+    area.appendChild(el);
+    placeElement(el, x, y);
+
+    setTimeout(() => el.remove(), 500);
   }
 
   function makePop(x, y, text) {
@@ -613,9 +657,17 @@ button:active {
     }
 
     for (const bomb of bombs) {
-      if (!bomb.safe && distance(head, bomb) < 48) {
-        makePop(head.x, head.y, "💥");
-        endGame(false);
+      if (!bomb.safe && distance(head, bomb) < 50) {
+        makeExplosion(bomb.x, bomb.y);
+
+        if (bomb.el) bomb.el.remove();
+
+        playing = false;
+
+        setTimeout(() => {
+          endGame(false);
+        }, 350);
+
         return;
       }
     }
