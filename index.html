@@ -421,8 +421,7 @@ function spawnItem(){
 
   const el=document.createElement("div");
   el.className="collect-item";
-
-  const img=images[collected%images.length];
+const img = images[collected % images.length] || "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png";
   el.style.backgroundImage='url("'+img+'")';
 
   area.appendChild(el);
