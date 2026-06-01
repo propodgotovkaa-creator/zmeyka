@@ -510,16 +510,16 @@ function spawnBomb(){
   let pos = null;
 
   for(let tries=0; tries<500; tries++){
-    const candidate = safeRandomPoint(180);
+    const candidate = safeRandomPoint(190);
 
     const farFromSnake =
       !snake[0] || distance(candidate, snake[0]) >= 220;
 
     const farFromItem =
-      !item || distance(candidate, item) >= 260;
+      !item || distance(candidate, item) >= 270;
 
     const farFromBombs =
-      bombs.every(b => distance(candidate, b) >= 280);
+      bombs.every(b => distance(candidate, b) >= 300);
 
     if(farFromSnake && farFromItem && farFromBombs){
       pos = candidate;
@@ -546,35 +546,6 @@ function spawnBomb(){
     bomb.el.classList.remove("safe");
   },SETTINGS.bombSafeMs);
 }
-  let pos,tries=0;
-
-  do{
-    pos=safeRandomPoint(220);
-    tries++;
-  }while(
-    (
-      (snake[0]&&distance(pos,snake[0])<SETTINGS.minBombSnakeDistance) ||
-      (item&&distance(pos,item)<SETTINGS.minBombItemDistance) ||
-      bombs.some(b=>distance(pos,b)<SETTINGS.minBombDistance)
-    ) && tries<300
-  );
-
-  const el=document.createElement("div");
-  el.className="bomb safe";
-  el.style.backgroundImage='url("'+SETTINGS.bombImage+'")';
-  area.appendChild(el);
-  placeElement(el,pos.x,pos.y);
-
-  const bomb={x:pos.x,y:pos.y,el,safe:true};
-  bombs.push(bomb);
-
-  setTimeout(()=>{
-    if(!playing||!bomb.el)return;
-    bomb.safe=false;
-    bomb.el.classList.remove("safe");
-  },SETTINGS.bombSafeMs);
-}
-
 function makeExplosion(x,y){
   const el=document.createElement("div");
   el.className="explosion";
