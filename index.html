@@ -509,17 +509,17 @@ function spawnBombsCycle(){
 function spawnBomb(){
   let pos = null;
 
-  for(let tries=0; tries<500; tries++){
-    const candidate = safeRandomPoint(190);
+  for(let tries=0; tries<300; tries++){
+    const candidate = safeRandomPoint(170);
 
     const farFromSnake =
-      !snake[0] || distance(candidate, snake[0]) >= 220;
+      !snake[0] || distance(candidate, snake[0]) >= 190;
 
     const farFromItem =
-      !item || distance(candidate, item) >= 270;
+      !item || distance(candidate, item) >= 230;
 
     const farFromBombs =
-      bombs.every(b => distance(candidate, b) >= 300);
+      bombs.every(b => distance(candidate, b) >= 210);
 
     if(farFromSnake && farFromItem && farFromBombs){
       pos = candidate;
@@ -528,7 +528,7 @@ function spawnBomb(){
   }
 
   if(!pos){
-    return;
+    pos = safeRandomPoint(170);
   }
 
   const el=document.createElement("div");
