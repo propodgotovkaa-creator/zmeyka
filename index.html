@@ -305,11 +305,9 @@ function placeElement(el,x,y){
 }
 
 function currentBombCount(){
-  if(collected>=10)return 9;
-  if(collected>=8)return 8;
-  if(collected>=6)return 7;
-  if(collected>=3)return 5;
-  return 4;
+  if(collected>=8)return 7;  // 9–15 раунд
+  if(collected>=4)return 6;  // 5–8 раунд
+  return 4;                  // 1–4 раунд
 }
 
 function clearGame(){
