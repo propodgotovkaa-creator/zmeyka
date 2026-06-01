@@ -258,7 +258,7 @@ const images = shuffleArray(
 
 const SETTINGS={
   targetCount:15,
-snakeSpeed:3.4,
+snakeSpeed:3.2,
   segmentDistance:24,
   startLength:8,
   growBy:1,
@@ -269,7 +269,7 @@ snakeSpeed:3.4,
   bombSafeMs:1000,
   bombRespawnDelayMs:700,
   wallPadding:92,
-  minBombDistance:230,
+ minBombDistance:300,
   minBombItemDistance:200,
   minBombSnakeDistance:200,
   headImage:"https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
@@ -510,14 +510,14 @@ function spawnBomb(){
   let pos,tries=0;
 
   do{
-    pos=safeRandomPoint(165);
+    pos=safeRandomPoint(220);
     tries++;
   }while(
     (
       (snake[0]&&distance(pos,snake[0])<SETTINGS.minBombSnakeDistance) ||
       (item&&distance(pos,item)<SETTINGS.minBombItemDistance) ||
       bombs.some(b=>distance(pos,b)<SETTINGS.minBombDistance)
-    ) && tries<80
+    ) && tries<300
   );
 
   const el=document.createElement("div");
