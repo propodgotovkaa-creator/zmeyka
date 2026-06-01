@@ -262,6 +262,7 @@ snakeSpeed:3.4,
   segmentDistance:24,
   startLength:8,
   growBy:1,
+  maxLength:11,
  pointerSmooth:.11,
   bodyFollow:.32,
   bombLifeMs:5000,
@@ -452,6 +453,9 @@ function collectItem(){
 
 function growSnake(){
   const oldTail=snake[snake.length-1];
+  if(snake.length >= SETTINGS.maxLength){
+  return;
+}
 
   oldTail.el.classList.remove("snake-tail");
   oldTail.el.classList.add("snake-body");
