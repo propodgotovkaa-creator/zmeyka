@@ -250,11 +250,11 @@ function shuffleArray(arr){
   return arr.sort(()=>Math.random()-.5);
 }
 
-const images = shuffleArray(
-  USER_CONFIG.images.length ? USER_CONFIG.images : [
-    "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png"
-  ]
-);
+const originalImages = USER_CONFIG.images.length ? USER_CONFIG.images : [
+  "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png"
+];
+
+let images = [];
 
 const SETTINGS={
   targetCount:15,
@@ -348,6 +348,7 @@ function createSnakePart(type,index=0){
 
 function startGame(){
   clearGame();
+  images = shuffleArray(originalImages);
   playing=true;
   collected=0;
   scoreEl.textContent="0 / "+SETTINGS.targetCount;
