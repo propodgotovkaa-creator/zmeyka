@@ -243,13 +243,13 @@ button:active {
 <body>
 <div id="FX_ROOT">
   <div id="gameArea"></div>
-  <div id="score">0 / 10</div>
+<div id="score">0 / 15</div>
   <div id="crosshair"></div>
 
   <div id="startScreen">
     <div class="panel">
       <h1>Гусеница</h1>
-      <p>Собери 10 картинок и не попади в бомбочки.</p>
+      <p>Собери 15 картинок и не попади в бомбочки.</p>
       <button id="startBtn">Начать игру</button>
     </div>
   </div>
@@ -277,7 +277,7 @@ button:active {
   const crosshair = document.getElementById("crosshair");
 
   const SETTINGS = {
-    targetCount: 10,
+   targetCount: 15,
     snakeSpeed: 3,
     segmentDistance: 24,
     startLength: 8,
@@ -336,11 +336,12 @@ button:active {
   }
 
   function currentBombCount(){
+    if (collected >= 10) return 9;
     if (collected >= 8) return 8;
     if (collected >= 6) return 7;
     if (collected >= 3) return 5;
     return 4;
-  }
+}
 
   function clearGame(){
     area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el => el.remove());
