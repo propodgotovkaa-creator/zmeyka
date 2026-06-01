@@ -195,7 +195,7 @@ button:active{transform:translateY(4px);box-shadow:0 4px 0 #d49b20}
 .snake-head{width:86px;height:86px;z-index:20}
 .snake-body{width:70px;height:70px}
 .snake-tail{width:62px;height:62px}
-z-index:20;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));animation:floatItem 1.2s ease-in-out infinite alternate}
+z-index:20;background.collect-item{position:absolute;width:92px;height:92px;transform:translate(-50%,-50%);z-index:20;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));animation:floatItem 1.2s ease-in-out infinite alternate}
 @keyframes floatItem{from{transform:translate(-50%,-50%) scale(.94)}to{transform:translate(-50%,-58%) scale(1.06)}}
 .bomb{position:absolute;width:72px;height:72px;transform:translate(-50%,-50%);z-index:9;background-repeat:no-repeat;background-position:center;background-size:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35));animation:bombFloat 1.2s ease-in-out infinite alternate}
 @keyframes bombFloat{from{transform:translate(-50%,-50%) scale(.96) rotate(-2deg)}to{transform:translate(-50%,-56%) scale(1.04) rotate(2deg)}}
@@ -415,7 +415,8 @@ function spawnItem(){
   }while(
     (
       (snake[0]&&distance(pos,snake[0])<180) ||
-     bombs.some(b=>distance(pos,b)<300)
+      bombs.some(b=>distance(pos,b)<300)
+    ) && tries<120
   );
 
   const el=document.createElement("div");
@@ -428,7 +429,6 @@ function spawnItem(){
   item={x:pos.x,y:pos.y,el};
   placeElement(el,pos.x,pos.y);
 }
-
 function collectItem(){
   collected++;
   scoreEl.textContent=collected+" / "+SETTINGS.targetCount;
