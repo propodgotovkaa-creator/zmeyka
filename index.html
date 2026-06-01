@@ -1,712 +1,276 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Гусеница: собери картинки</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Редактор игры Гусеница</title>
 
 <style>
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #bda8ff, #6d78dd 70%);
+*{
+  box-sizing:border-box;
 }
 
-#FX_ROOT {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  user-select: none;
-  cursor: default;
+body{
+  margin:0;
+  padding:30px;
+  background:#f5f7fb;
+  font-family:Arial,sans-serif;
 }
 
-#gameArea {
-  position: absolute;
-  inset: 24px;
-  border-radius: 34px;
-  overflow: hidden;
-  background-image: url("https://github.com/propodgotovkaa-creator/zmeyka/blob/main/assets/assets:game-background.png?raw=true");
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.28),
-    inset 0 0 25px rgba(255,255,255,.10);
-  border: 8px solid rgba(255,255,255,.12);
-}
-#score {
-  position: absolute;
-
-  top: 87px;
-  left: 92px;
-
-  width: 210px;
-  height: 58px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  z-index: 35;
-
-  font-size: 30px;
-  font-weight: 900;
-  color: white;
-
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-
-  text-shadow:
-    0 3px 0 rgba(75,20,130,.75),
-    0 0 7px rgba(255,255,255,.55);
-
-  pointer-events: none;
+.wrapper{
+  max-width:1100px;
+  margin:auto;
 }
 
-#startScreen, #endScreen {
-  position: absolute;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,.72);
-  text-align: center;
+h1{
+  margin-top:0;
+  color:#2d4d66;
 }
 
-.panel {
-  background: white;
-  border-radius: 30px;
-  padding: 34px 42px;
-  box-shadow: 0 16px 45px rgba(0,0,0,.22);
-  max-width: 500px;
+.section{
+  background:#fff;
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
 }
 
-.panel h1 {
-  margin: 0 0 16px;
-  font-size: 42px;
-  color: #28566c;
+label{
+  display:block;
+  margin-bottom:6px;
+  font-weight:700;
+  color:#355166;
 }
 
-.panel p {
-  font-size: 21px;
-  color: #48616d;
+input,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5dce5;
+  border-radius:12px;
+  margin-bottom:14px;
+  font-size:15px;
 }
 
-button {
-  border: none;
-  border-radius: 22px;
-  padding: 16px 34px;
-  font-size: 24px;
-  font-weight: 900;
-  background: linear-gradient(#ffe27a, #ffbd38);
-  color: #5a3b00;
-  cursor: pointer;
-  box-shadow: 0 8px 0 #d49b20, 0 12px 18px rgba(0,0,0,.18);
+textarea{
+  resize:vertical;
+  min-height:90px;
 }
 
-button:active {
-  transform: translateY(4px);
-  box-shadow: 0 4px 0 #d49b20;
+.imagesGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
 }
 
-#crosshair {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,.95);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 7;
-  display: none;
-  transform: translate(-50%, -50%);
-  background: rgba(255,255,255,.22);
-  box-shadow:
-    0 0 0 5px rgba(255,255,255,.18),
-    0 0 14px rgba(255,255,255,.9),
-    0 0 22px rgba(111,210,255,.75);
+.imageField{
+  background:#f8fafc;
+  padding:12px;
+  border-radius:12px;
 }
 
-#crosshair::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  background: rgba(40,86,108,.75);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+.imageField span{
+  display:block;
+  margin-bottom:6px;
+  font-weight:700;
 }
 
-.snake-part {
-  position: absolute;
-  transform: translate3d(-50%, -50%, 0);
-  pointer-events: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  z-index: 10;
-  will-change: transform, left, top;
-  filter: drop-shadow(0 6px 6px rgba(54,0,80,.16));
+button{
+  border:none;
+  border-radius:16px;
+  padding:16px 26px;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  background:#4f7cff;
+  color:white;
 }
 
-.snake-head { width: 86px; height: 86px; z-index: 20; }
-.snake-body { width: 70px; height: 70px; }
-.snake-tail { width: 62px; height: 62px; }
-
-.collect-item {
-  position: absolute;
-  width: 92px;
-  height: 92px;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,.25));
-  animation: floatItem 1.2s ease-in-out infinite alternate;
+button:hover{
+  opacity:.92;
 }
 
-@keyframes floatItem {
-  from { transform: translate(-50%, -50%) scale(.94); }
-  to { transform: translate(-50%, -58%) scale(1.06); }
+#result{
+  margin-top:20px;
 }
 
-.bomb {
-  position: absolute;
-  width: 72px;
-  height: 72px;
-  transform: translate(-50%, -50%);
-  z-index: 9;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,.35));
-  animation: bombFloat 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes bombFloat {
-  from { transform: translate(-50%, -50%) scale(.96) rotate(-2deg); }
-  to { transform: translate(-50%, -56%) scale(1.04) rotate(2deg); }
-}
-
-.bomb.safe {
-  animation: bombSafe .18s infinite alternate;
-  opacity: .45;
-}
-
-@keyframes bombSafe {
-  from { opacity: .25; transform: translate(-50%, -50%) scale(.9); }
-  to { opacity: .85; transform: translate(-50%, -50%) scale(1.06); }
-}
-
-.explosion {
-  position: absolute;
-  width: 135px;
-  height: 135px;
-  transform: translate(-50%, -50%) scale(.35);
-  z-index: 40;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  pointer-events: none;
-  animation: boom .45s ease-out forwards;
-}
-
-@keyframes boom {
-  from { opacity: 1; transform: translate(-50%, -50%) scale(.35); }
-  to { opacity: 0; transform: translate(-50%, -50%) scale(1.45); }
-}
-
-.pop {
-  position: absolute;
-  font-size: 38px;
-  pointer-events: none;
-  animation: pop .6s ease-out forwards;
-  z-index: 30;
-}
-
-@keyframes pop {
-  from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
-  to { opacity: 0; transform: translate(-50%, -95%) scale(1.5); }
+#gameLink,
+#iframeCode{
+  width:100%;
+  min-height:120px;
+  font-family:monospace;
 }
 </style>
 </head>
 
 <body>
-<div id="FX_ROOT">
-  <div id="gameArea"></div>
-<div id="score">0 / 15</div>
-  <div id="crosshair"></div>
 
-  <div id="startScreen">
-    <div class="panel">
-      <h1>Гусеница</h1>
-      <p>Собери 15 картинок и не попади в бомбочки.</p>
-      <button id="startBtn">Начать игру</button>
-    </div>
-  </div>
+<div class="wrapper">
 
-  <div id="endScreen" style="display:none;">
-    <div class="panel">
-      <h1 id="endTitle">Победа!</h1>
-      <p id="endText">Ты собрал все картинки!</p>
-      <button id="restartBtn">Играть снова</button>
-    </div>
-  </div>
+<h1>Редактор игры «Гусеница»</h1>
+
+<div class="section">
+
+<h2>Текст до игры</h2>
+
+<label>Заголовок</label>
+<input id="titleStart"
+value="Гусеница">
+
+<label>Текст</label>
+<textarea id="textStart">Собери все картинки и не попади в бомбочки.</textarea>
+
 </div>
 
+<div class="section">
+
+<h2>Текст после победы</h2>
+
+<label>Заголовок</label>
+<input id="titleWin"
+value="Молодец!">
+
+<label>Текст</label>
+<textarea id="textWin">Ты выполнил задание!</textarea>
+
+</div>
+
+<div class="section">
+
+<h2>Картинки</h2>
+
+<div class="imagesGrid">
+
+<div class="imageField">
+<span>Картинка 1</span>
+<input id="img1">
+</div>
+
+<div class="imageField">
+<span>Картинка 2</span>
+<input id="img2">
+</div>
+
+<div class="imageField">
+<span>Картинка 3</span>
+<input id="img3">
+</div>
+
+<div class="imageField">
+<span>Картинка 4</span>
+<input id="img4">
+</div>
+
+<div class="imageField">
+<span>Картинка 5</span>
+<input id="img5">
+</div>
+
+<div class="imageField">
+<span>Картинка 6</span>
+<input id="img6">
+</div>
+
+<div class="imageField">
+<span>Картинка 7</span>
+<input id="img7">
+</div>
+
+<div class="imageField">
+<span>Картинка 8</span>
+<input id="img8">
+</div>
+
+<div class="imageField">
+<span>Картинка 9</span>
+<input id="img9">
+</div>
+
+<div class="imageField">
+<span>Картинка 10</span>
+<input id="img10">
+</div>
+
+<div class="imageField">
+<span>Картинка 11</span>
+<input id="img11">
+</div>
+
+<div class="imageField">
+<span>Картинка 12</span>
+<input id="img12">
+</div>
+
+<div class="imageField">
+<span>Картинка 13</span>
+<input id="img13">
+</div>
+
+<div class="imageField">
+<span>Картинка 14</span>
+<input id="img14">
+</div>
+
+<div class="imageField">
+<span>Картинка 15</span>
+<input id="img15">
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<button id="generateBtn">
+Создать игру
+</button>
+
+<div id="result">
+
+<h3>Ссылка</h3>
+
+<textarea id="gameLink"></textarea>
+
+<h3>Iframe для Genially</h3>
+
+<textarea id="iframeCode"></textarea>
+
+</div>
+
+</div>
+
+</div>
 <script>
-(function(){
-  const root = document.getElementById("FX_ROOT");
-  const area = document.getElementById("gameArea");
-  const scoreEl = document.getElementById("score");
-  const startScreen = document.getElementById("startScreen");
-  const endScreen = document.getElementById("endScreen");
-  const startBtn = document.getElementById("startBtn");
-  const restartBtn = document.getElementById("restartBtn");
-  const endTitle = document.getElementById("endTitle");
-  const endText = document.getElementById("endText");
-  const crosshair = document.getElementById("crosshair");
+const generateBtn = document.getElementById("generateBtn");
+const gameLink = document.getElementById("gameLink");
+const iframeCode = document.getElementById("iframeCode");
 
-  const SETTINGS = {
-   targetCount: 15,
-    snakeSpeed: 3,
-    segmentDistance: 24,
-    startLength: 8,
-    growBy: 1,
-    pointerSmooth: .1,
-    bodyFollow: .32,
+generateBtn.addEventListener("click", () => {
+  const params = [];
 
-    bombLifeMs: 5000,
-    bombSafeMs: 1000,
-    bombRespawnDelayMs: 700,
-    wallPadding: 92,
+  params.push("title=" + encodeURIComponent(document.getElementById("titleStart").value.trim()));
+  params.push("start=" + encodeURIComponent(document.getElementById("textStart").value.trim()));
+  params.push("win=" + encodeURIComponent(document.getElementById("titleWin").value.trim()));
+  params.push("wintext=" + encodeURIComponent(document.getElementById("textWin").value.trim()));
 
-    minBombDistance: 230,
-    minBombItemDistance: 200,
-    minBombSnakeDistance: 200,
-
-    itemImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/%D1%80%D0%BE%D0%B1%D0%BE%D1%82.png",
-
-    headImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-head.svg",
-    bodyImages: [
-      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-1.svg",
-      "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-body-2.svg"
-    ],
-    tailImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/caterpillar-tail.svg",
-    bombImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/game-bomb.svg",
-    explosionImage: "https://raw.githubusercontent.com/propodgotovkaa-creator/zmeyka/refs/heads/main/assets/bomb-explosion.svg"
-  };
-
-  let playing = false;
-  let collected = 0;
-  let mouse = { x: 300, y: 300 };
-  let targetMouse = { x: 300, y: 300 };
-  let snake = [];
-  let item = null;
-  let bombs = [];
-  let animationId = null;
-  let bombTimer = null;
-
-  function areaRect(){
-    return area.getBoundingClientRect();
-  }
-
-  function rand(min, max){
-    return Math.random() * (max - min) + min;
-  }
-
-  function distance(a, b){
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function placeElement(el, x, y){
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-  }
-
-  function currentBombCount(){
-    if (collected >= 10) return 9;
-    if (collected >= 8) return 8;
-    if (collected >= 6) return 7;
-    if (collected >= 3) return 5;
-    return 4;
-}
-
-  function clearGame(){
-    area.querySelectorAll(".snake-part,.collect-item,.bomb,.pop,.explosion").forEach(el => el.remove());
-    bombs = [];
-    snake = [];
-    item = null;
-
-    if(animationId) cancelAnimationFrame(animationId);
-    if(bombTimer) clearTimeout(bombTimer);
-  }
-
-  function safeRandomPoint(margin = 155){
-    const rect = areaRect();
-    return {
-      x: rand(margin, rect.width - margin),
-      y: rand(margin, rect.height - margin)
-    };
-  }
-
-  function createSnakePart(type, index = 0){
-    const part = document.createElement("div");
-    part.classList.add("snake-part");
-
-    if(type === "head"){
-      part.classList.add("snake-head");
-      part.style.backgroundImage = `url("${SETTINGS.headImage}")`;
-    } else if(type === "tail"){
-      part.classList.add("snake-tail");
-      part.style.backgroundImage = `url("${SETTINGS.tailImage}")`;
-    } else {
-      part.classList.add("snake-body");
-      part.style.backgroundImage = `url("${SETTINGS.bodyImages[index % SETTINGS.bodyImages.length]}")`;
-    }
-
-    area.appendChild(part);
-    return part;
-  }
-
-  function startGame(){
-    clearGame();
-
-    playing = true;
-    collected = 0;
-    scoreEl.textContent = "0 / " + SETTINGS.targetCount;
-
-    startScreen.style.display = "none";
-    endScreen.style.display = "none";
-    crosshair.style.display = "block";
-    root.style.cursor = "none";
-
-    const rect = areaRect();
-    const startX = rect.width / 2;
-    const startY = rect.height / 2;
-
-    mouse.x = startX + 180;
-    mouse.y = startY;
-    targetMouse.x = mouse.x;
-    targetMouse.y = mouse.y;
-
-    for(let i = 0; i < SETTINGS.startLength; i++){
-      let type = "body";
-
-      if(i === 0) type = "head";
-      else if(i === SETTINGS.startLength - 1) type = "tail";
-
-      const part = createSnakePart(type, i);
-
-      snake.push({
-        x: startX - i * SETTINGS.segmentDistance,
-        y: startY,
-        el: part,
-        type
-      });
-    }
-
-    spawnItem();
-    spawnBombsCycle();
-    loop();
-  }
-
-  function endGame(win){
-    playing = false;
-
-    if(animationId) cancelAnimationFrame(animationId);
-    if(bombTimer) clearTimeout(bombTimer);
-
-    crosshair.style.display = "none";
-    root.style.cursor = "default";
-    endScreen.style.display = "flex";
-
-    if(win){
-      endTitle.textContent = "Победа!";
-      endText.textContent = "Ты собрал все картинки!";
-    } else {
-      endTitle.textContent = "Попробуй ещё раз!";
-      endText.textContent = "Гусеница столкнулась с бомбочкой или краем поля.";
+  for(let i = 1; i <= 15; i++){
+    const value = document.getElementById("img" + i).value.trim();
+    if(value){
+      params.push("img" + i + "=" + encodeURIComponent(value));
     }
   }
 
-  function spawnItem(){
-    if(item && item.el) item.el.remove();
+  const gameUrl =
+    "https://propodgotovkaa-creator.github.io/zmeyka/game.html?" +
+    params.join("&");
 
-    let pos, tries = 0;
+  gameLink.value = gameUrl;
 
-    do {
-      pos = safeRandomPoint(155);
-      tries++;
-    } while (
-      (
-        (snake[0] && distance(pos, snake[0]) < 180) ||
-        bombs.some(b => distance(pos, b) < SETTINGS.minBombItemDistance)
-      ) && tries < 120
-    );
-
-    const el = document.createElement("div");
-    el.className = "collect-item";
-    el.style.backgroundImage = `url("${SETTINGS.itemImage}")`;
-    area.appendChild(el);
-
-    item = { x: pos.x, y: pos.y, el };
-    placeElement(el, pos.x, pos.y);
-  }
-
-  function collectItem(){
-    collected++;
-    scoreEl.textContent = collected + " / " + SETTINGS.targetCount;
-
-    makePop(item.x, item.y, "✨");
-
-    if(item && item.el) item.el.remove();
-    item = null;
-
-    growSnake();
-
-    if(collected >= SETTINGS.targetCount){
-      endGame(true);
-      return;
-    }
-
-    spawnItem();
-  }
-
-  function growSnake(){
-    const oldTail = snake[snake.length - 1];
-
-    oldTail.el.classList.remove("snake-tail");
-    oldTail.el.classList.add("snake-body");
-    oldTail.el.style.backgroundImage =
-      `url("${SETTINGS.bodyImages[snake.length % SETTINGS.bodyImages.length]}")`;
-    oldTail.type = "body";
-
-    for(let i = 0; i < SETTINGS.growBy; i++){
-      const isLast = i === SETTINGS.growBy - 1;
-      const type = isLast ? "tail" : "body";
-      const part = createSnakePart(type, snake.length + i);
-
-      snake.push({
-        x: oldTail.x,
-        y: oldTail.y,
-        el: part,
-        type
-      });
-    }
-  }
-
-  function spawnBombsCycle(){
-    bombs.forEach(b => {
-      if(b.el) b.el.remove();
-    });
-
-    bombs = [];
-
-    const count = currentBombCount();
-
-    for(let i = 0; i < count; i++){
-      spawnBomb();
-    }
-
-    bombTimer = setTimeout(() => {
-      bombs.forEach(b => {
-        if(b.el){
-          makeExplosion(b.x, b.y);
-          b.el.remove();
-        }
-      });
-
-      bombs = [];
-
-      bombTimer = setTimeout(() => {
-        if(playing) spawnBombsCycle();
-      }, SETTINGS.bombRespawnDelayMs);
-
-    }, SETTINGS.bombLifeMs);
-  }
-
-  function spawnBomb(){
-    let pos, tries = 0;
-
-    do {
-      pos = safeRandomPoint(165);
-      tries++;
-    } while (
-      (
-        (snake[0] && distance(pos, snake[0]) < SETTINGS.minBombSnakeDistance) ||
-        (item && distance(pos, item) < SETTINGS.minBombItemDistance) ||
-        bombs.some(b => distance(pos, b) < SETTINGS.minBombDistance)
-      ) && tries < 80
-    );
-
-    const el = document.createElement("div");
-    el.className = "bomb safe";
-    el.style.backgroundImage = `url("${SETTINGS.bombImage}")`;
-    area.appendChild(el);
-    placeElement(el, pos.x, pos.y);
-
-    const bomb = { x: pos.x, y: pos.y, el, safe: true };
-    bombs.push(bomb);
-
-    setTimeout(() => {
-      if(!playing || !bomb.el) return;
-      bomb.safe = false;
-      bomb.el.classList.remove("safe");
-    }, SETTINGS.bombSafeMs);
-  }
-
-  function makeExplosion(x, y){
-    const el = document.createElement("div");
-    el.className = "explosion";
-    el.style.backgroundImage = `url("${SETTINGS.explosionImage}")`;
-    area.appendChild(el);
-    placeElement(el, x, y);
-
-    setTimeout(() => el.remove(), 500);
-  }
-
-  function makePop(x, y, text){
-    const el = document.createElement("div");
-    el.className = "pop";
-    el.textContent = text;
-    area.appendChild(el);
-    placeElement(el, x, y);
-
-    setTimeout(() => el.remove(), 650);
-  }
-
-  function updateSnake(){
-    mouse.x += (targetMouse.x - mouse.x) * SETTINGS.pointerSmooth;
-    mouse.y += (targetMouse.y - mouse.y) * SETTINGS.pointerSmooth;
-
-    const head = snake[0];
-    const dx = mouse.x - head.x;
-    const dy = mouse.y - head.y;
-    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const step = Math.min(SETTINGS.snakeSpeed, dist);
-
-    head.x += (dx / dist) * step;
-    head.y += (dy / dist) * step;
-
-    let angle = Math.atan2(dy, Math.abs(dx)) * 180 / Math.PI;
-
-    if(angle > 55) angle = 55;
-    if(angle < -55) angle = -55;
-
-    const faceSide = dx < 0 ? -1 : 1;
-
-    head.el.style.transform =
-      `translate3d(-50%,-50%,0) rotate(${angle}deg) scaleX(${faceSide})`;
-
-    for(let i = 1; i < snake.length; i++){
-      const prev = snake[i - 1];
-      const cur = snake[i];
-
-      const dx2 = prev.x - cur.x;
-      const dy2 = prev.y - cur.y;
-      const d = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
-
-      if(d > SETTINGS.segmentDistance){
-        const move = (d - SETTINGS.segmentDistance) * SETTINGS.bodyFollow;
-        cur.x += (dx2 / d) * move;
-        cur.y += (dy2 / d) * move;
-      }
-
-      if(cur.type === "tail"){
-        const tailAngle = Math.atan2(dy2, dx2) * 180 / Math.PI;
-        cur.el.style.transform =
-          `translate3d(-50%,-50%,0) rotate(${tailAngle}deg)`;
-      } else {
-        cur.el.style.transform = "translate3d(-50%,-50%,0)";
-      }
-    }
-
-    snake.forEach(part => {
-      part.el.style.left = part.x + "px";
-      part.el.style.top = part.y + "px";
-    });
-  }
-
-  function checkCollisions(){
-    const rect = areaRect();
-    const head = snake[0];
-    const pad = SETTINGS.wallPadding;
-
-    if(
-      head.x < pad ||
-      head.y < pad ||
-      head.x > rect.width - pad ||
-      head.y > rect.height - pad
-    ){
-      endGame(false);
-      return;
-    }
-
-    if(item && distance(head, item) < 58){
-      collectItem();
-      return;
-    }
-
-    for(const bomb of bombs){
-      if(!bomb.safe && distance(head, bomb) < 50){
-        makeExplosion(bomb.x, bomb.y);
-
-        if(bomb.el) bomb.el.remove();
-
-        playing = false;
-
-        setTimeout(() => endGame(false), 350);
-        return;
-      }
-    }
-  }
-
-  function loop(){
-    if(!playing) return;
-
-    updateSnake();
-    checkCollisions();
-
-    animationId = requestAnimationFrame(loop);
-  }
-
-  function movePointer(clientX, clientY){
-    const rect = areaRect();
-
-    targetMouse.x = clientX - rect.left;
-    targetMouse.y = clientY - rect.top;
-
-    crosshair.style.left = clientX + "px";
-    crosshair.style.top = clientY + "px";
-  }
-
-  root.addEventListener("mousemove", e => {
-    if(!playing) return;
-    movePointer(e.clientX, e.clientY);
-  });
-
-  root.addEventListener("touchmove", e => {
-    if(!playing) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    movePointer(t.clientX, t.clientY);
-  }, { passive:false });
-
-  startBtn.addEventListener("click", startGame);
-  restartBtn.addEventListener("click", startGame);
-})();
+  iframeCode.value =
+`<iframe src="${gameUrl}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+});
 </script>
+
 </body>
 </html>
